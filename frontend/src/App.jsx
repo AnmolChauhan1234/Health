@@ -1,13 +1,31 @@
-// import './App.css'
+import React from 'react';
+
+import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
+
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+
+import Layout from './Layout';
+import { Home, About, Profile } from './components';
 
 function App() {
 
-  const testResult = import.meta.env.VITE_ENV_TEST;
-  console.log(testResult);
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route path='/' element={<Layout />}>
+          <Route path='' element={<Home />} />
+          <Route path='about' element={<About />} />
+          <Route path='profile' element={<Profile />} />
+        </Route>,
+      </>
+    )
+  );
 
   return (
-    <h1 className="text-2xl bg-blue-400 text-white">Hello New Tailwind CSS.</h1>
-  )
+    <ThemeContextProvider>
+      <RouterProvider router={router} />
+    </ThemeContextProvider>
+  );
 }
 
-export default App
+export default App;
