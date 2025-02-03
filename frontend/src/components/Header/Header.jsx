@@ -8,7 +8,7 @@ function Header() {
 
   return (
     <header 
-      className='h-16 w-full text-gray-900 dark:text-white sticky top-0 flex items-center z-10 bg-white dark:bg-gray-900 px-1 sm:px-2 shadow-md shadow-gray-300 dark:shadow-sm dark:shadow-black ubuntu-regular'
+      className='h-16 text-gray-900 dark:text-white sticky top-0 flex items-center z-10 bg-white dark:bg-gray-900 px-1 sm:px-2 shadow-md shadow-gray-300 dark:shadow-sm dark:shadow-black ubuntu-regular'
     >
       <nav className='h-[90%] w-full flex items-center justify-between px-1 sm:px-2 ubuntu-medium-italic'>
 

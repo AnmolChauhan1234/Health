@@ -1,9 +1,9 @@
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
 import ContentWrite from "./ContentWrite/ContentWrite";
-import Profile from "../Pages/Profile/Profile";
-import Home from "../Pages/Home/Home";
-import About from '../Pages/About/About'
 import Map from "./Map/Map";
+import Login from "./Login/Login";
+import Singup from "./Signup/Singup";
 
-export {Header , Footer , ContentWrite , Profile , Home , About , Map};
+
+export {Header , Footer , ContentWrite , Map , Login , Singup};

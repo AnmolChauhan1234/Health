@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-function Map({isDarkMode}) {
+function Map() {
 
   const [position, setPosition] = useState(null);
-
   const [currentLocation, setCurrentLocation] = useState(null);
 
   useEffect(() => {
@@ -31,26 +30,16 @@ function Map({isDarkMode}) {
     return position === null ? null : <Marker position={position} />;
   };
 
-  // Theame Mode
-  // 🌙 Dark mode tile layer
-  const darkTileLayer =
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-
-  // ☀️ Light mode tile layer (default)
-  const lightTileLayer =
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-
   return (
     <div>
       {/* Map Container */}
       <MapContainer
         center={currentLocation || [28.6139, 77.2090]} // Default center (New Delhi) or current location
         zoom={10}
-        className="h-[300px] sm:h-[500px] w-[98%] mx-auto"
+        className="h-[300px] sm:h-[500px] w-[90%]"
         // style={{ height: "500px", width: "100%" }}
       >
-        <TileLayer url={isDarkMode ? darkTileLayer : lightTileLayer} />
-
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {currentLocation && <Marker position={currentLocation} />}
         <LocationMarker />
       </MapContainer>

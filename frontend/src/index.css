@@ -10,14 +10,6 @@
     transition: all 0.2s ease-in-out;
   }
 
-  .surround{
-    border: 1px solid black;
-  }
-
-  .surround-white{
-    border: 1px solid white;
-  }
-
   .ubuntu-light {
     font-family: "Ubuntu", serif;
     font-weight: 300;
