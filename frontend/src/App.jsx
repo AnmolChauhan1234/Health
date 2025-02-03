@@ -1,11 +1,13 @@
 import React from 'react';
 
 import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
+import MenuContextProvider from './context/MenuContext/MenuContextProvider'
 
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 
 import Layout from './Layout';
 import { Home, About, Profile } from './components';
+
 
 function App() {
 
@@ -23,7 +25,9 @@ function App() {
 
   return (
     <ThemeContextProvider>
-      <RouterProvider router={router} />
+      <MenuContextProvider>
+        <RouterProvider router={router} />
+      </MenuContextProvider>
     </ThemeContextProvider>
   );
 }
