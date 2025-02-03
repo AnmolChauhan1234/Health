@@ -1,0 +1,95 @@
+import React, { useState } from 'react'
+
+function Login() {
+
+  const[formData , setFormData] = useState({
+    email:"",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    const {name , value} = e.target;
+    setFormData({
+      ...formData, 
+      [name]: value 
+    });
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    data.append('email' , formData.email);
+    data.append('password' , formData.password);
+
+    //Log FormData content
+    // for (let pair of data.entries()) {
+    //   console.log(pair[0] + ": " + pair[1]);
+    // }
+
+    //Clean up Submission.
+    setFormData({
+      email: "",
+      password: ""
+    })
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className='border-[1px] border-gray-300 dark:border-gray-400 h-max w-[80vw] sm:w-96 flex flex-col gap-y-2 px-3 py-5 mx-auto shadow-md shadow-gray-200 dark:shadow-gray-500 text-black dark:text-white ubuntu-medium-italic rounded-md'
+    >
+
+      {/* Email section starts here */}
+      <label 
+        htmlFor="email"
+        className='font-medium text-gray-500 dark:text-white'
+      >
+        Email Id
+      </label>
+      <input 
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        placeholder='email here ...'
+        className='w-full h-9 border-[1px] border-gray-400 rounded-sm  mb-1 focus:border-amber-500 outline-none shadow-inner shadow-gray-100 dark:shadow-none px-2 text-gray-700 dark:text-white dark:placeholder:text-gray-400 ubuntu-light'
+        required
+      />
+      {/* Email section ends here */}
+
+      {/* Password section starts here */}
+      <label 
+        htmlFor="password"
+        className='font-medium text-gray-500 dark:text-white'
+      >
+        Password
+      </label>
+      <input 
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        placeholder='password ...'
+        className='w-full h-9 border-[1px] border-gray-400 rounded-sm mb-1 focus:border-amber-500 outline-none shadow-inner shadow-gray-100 dark:shadow-none px-2 text-gray-700 dark:text-white dark:placeholder:text-gray-400 ubuntu-light'
+        required 
+      />
+      {/* Password section ends here */}
+
+      <div>
+        <p className='float-end text-sky-500 text-sm ubuntu-regular underline hover:text-sky-400 cursor-pointer'>
+          forget password?
+        </p>
+      </div>
+      <button 
+        type="submit"
+        className='w-[80%] bg-amber-500 hover:bg-amber-400 text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer'
+      >
+        Login
+      </button>
+
+    </form>
+  )
+}
+
+export default Login
