@@ -28,11 +28,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         elif role == 'hospital':
             Hospital.objects.create(user=user)
 
-        # Generate JWT Tokens
-        refresh = RefreshToken.for_user(user)
-        user.refresh_token = str(refresh)
-        user.save()
-
         return user
 
 

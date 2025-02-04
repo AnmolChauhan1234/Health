@@ -22,6 +22,8 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
+            user.refresh_token = str(refresh)
+            user.save()
             
             return Response({
                 'access_token': str(refresh.access_token),
@@ -46,6 +48,10 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
+
+            # Store the new refresh token in the database
+            user.refresh_token = refresh_token
+            user.save()
 
             return Response({
                 'access_token': access_token,
