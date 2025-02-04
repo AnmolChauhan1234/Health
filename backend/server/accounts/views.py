@@ -9,37 +9,53 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from django.http import JsonResponse
 
 
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]  # Add permission classes here
-    
+    permission_classes = [AllowAny]
+
     @csrf_exempt
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
+
+            # Save refresh token in the database
             user.refresh_token = str(refresh)
             user.save()
-            
-            return Response({
+
+            response = JsonResponse({
                 'access_token': str(refresh.access_token),
-                'refresh_token': str(refresh),
                 'message': 'User registered successfully!'
             }, status=status.HTTP_201_CREATED)
-        
+
+            # Store refresh token in HttpOnly cookie
+            response.set_cookie(
+                'refresh_token', str(refresh),
+                httponly=True,
+                secure=settings.SECURE_COOKIE,
+                max_age=settings.REFRESH_TOKEN_EXPIRATION,
+                samesite='Strict'
+            )
+
+            return response
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid():
-            # Authenticate the user
             user = serializer.validated_data
             if not user:
                 raise AuthenticationFailed('Invalid username or password')
@@ -47,20 +63,29 @@ class LoginView(APIView):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-            refresh_token = str(refresh)
 
-            # Store the new refresh token in the database
-            user.refresh_token = refresh_token
+            # Store the refresh token in the database
+            user.refresh_token = str(refresh)
             user.save()
 
-            return Response({
+            response = JsonResponse({
                 'access_token': access_token,
-                'refresh_token': refresh_token,
                 'message': 'Login successful'
             }, status=status.HTTP_200_OK)
-        
+
+            # Store refresh token in HttpOnly cookie
+            response.set_cookie(
+                'refresh_token', str(refresh),
+                httponly=True,
+                secure=settings.SECURE_COOKIE,
+                max_age=settings.REFRESH_TOKEN_EXPIRATION,
+                samesite='Strict'
+            )
+
+            return response
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 User = get_user_model()
 
@@ -69,11 +94,11 @@ class CustomTokenRefreshView(TokenRefreshView):
 
     def post(self, request):
         print("refresh token view called")
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return Response({"detail": "Refresh token missing or invalid format."}, status=status.HTTP_400_BAD_REQUEST)
 
-        refresh_token = auth_header.split(' ')[1] 
+        # Get refresh token from cookies (NOT headers)
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response({"detail": "Refresh token missing."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             decoded_refresh = RefreshToken(refresh_token)
@@ -85,18 +110,27 @@ class CustomTokenRefreshView(TokenRefreshView):
                 return Response({"detail": "Invalid refresh token."}, status=status.HTTP_401_UNAUTHORIZED)
 
             new_refresh = RefreshToken.for_user(user)
-            
             new_access = new_refresh.access_token
-            
 
+            response = JsonResponse({
+                'access': str(new_access),
+                'message': 'New access token issued.'
+            }, status=status.HTTP_200_OK)
+
+            # Update refresh token in HttpOnly cookie
+            response.set_cookie(
+                'refresh_token', str(new_refresh),
+                httponly=True,
+                secure=settings.SECURE_COOKIE,
+                max_age=settings.REFRESH_TOKEN_EXPIRATION,
+                samesite='Strict'
+            )
+
+            # Save new refresh token in the database
             user.refresh_token = str(new_refresh)
             user.save()
 
-            return Response({
-                'access': str(new_access),
-                'refresh': str(new_refresh),
-                'message': 'New access and refresh tokens issued.'
-            }, status=status.HTTP_200_OK)
+            return response
 
         except TokenError:
             return Response({"detail": "Invalid or expired refresh token."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -105,12 +139,20 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 
+
 class LogoutView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        request.user.refresh_token = None
-        request.user.save()
+        user = request.user
 
-        response = Response({"message": "Logged out successfully"})
+        # Remove refresh token from the database
+        user.refresh_token = None
+        user.save()
+
+        response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+
+        # Clear refresh token cookie
+        response.delete_cookie('refresh_token')
+
         return response
