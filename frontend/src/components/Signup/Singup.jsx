@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import api from '../../hooks/apiInstance'
+import { useUserContext } from '../../context/UserContext/UserContextProvider';
 
 function Signup() {
+
+  const {user , setUser} = useUserContext();
 
   const [formData, setFormData] = useState({
     role: '',
@@ -73,7 +77,7 @@ function Signup() {
   }
 
   //Handle Submit function.
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     //Validation checks
@@ -82,22 +86,53 @@ function Signup() {
       return;
     }
 
-    // Creating data to send to the backend.
-    const data = new FormData();
-    data.append('role', formData.role);
-    data.append('full_name', formData.fullName);
-    data.append('phone_number', formData.phoneNumber);
-    data.append('email', formData.email);
-    data.append('password', formData.password);
-    data.append('confirmPassword', formData.confirmPassword);
+    //sending data over the sign-up api.
+    try {
+      const response = await api.post("/accounts/register/",{
+        role:formData.role,
+        full_name: formData.fullName,
+        phone_number: formData.phoneNumber,
+        email: formData.email,
+        password:formData.password
+      })
 
-    // printing data
-    for (let items of data.entries()) {
-      console.log(items);
+      if(response.status === 201){
+
+        //saving the token to sessionStorage.
+        sessionStorage.setItem('token' , response.data.access_token);
+
+        //displaying the message received.
+        console.log(response.data.message);
+
+        //setting user to true, for context use.
+        // setUser(true);
+      } else {
+        console.log('Could not Register. Try again later');
+      }
+
+    } catch (error) {
+      console.error('Sign-up Failed.' , error);
     }
 
     //field clean-up
     cleanForm();
+
+    // /accounts/register/
+    // Creating data to send to the backend.
+    // const data = new FormData();
+    // data.append('role', formData.role);
+    // data.append('full_name', formData.fullName);
+    // data.append('phone_number', formData.phoneNumber);
+    // data.append('email', formData.email);
+    // data.append('password', formData.password);
+    // data.append('confirmPassword', formData.confirmPassword);
+
+    // printing data
+    // for (let items of data.entries()) {
+    //   console.log(items);
+    // }
+
+    
   };
 
   return (
