@@ -5,6 +5,7 @@ import { useUserContext } from '../../context/UserContext/UserContextProvider';
 function Login() {
 
   const {setUser} = useUserContext();
+  const [isLoading , setIsLoading] = useState(false);
 
   const[formData , setFormData] = useState({
     email:"",
@@ -21,6 +22,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     //Calling login api.
     try {
@@ -33,6 +35,7 @@ function Login() {
 
         //setting user to true , means user is logged in.
         setUser(true);
+        localStorage.setItem('user' , true);
 
         //destructure the access_token and message received.
         const {access_token , message} = response.data;
@@ -52,6 +55,7 @@ function Login() {
       email: "",
       password: ""
     })
+    setIsLoading(false);
 
 
     // const data = new FormData();
@@ -119,9 +123,10 @@ function Login() {
       </div>
       <button 
         type="submit"
-        className='w-[80%] bg-amber-500 hover:bg-amber-400 text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer'
+        className={`w-[80%] text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer ${isLoading ? 'bg-amber-400 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-400'}`}
+        disabled={isLoading}
       >
-        Login
+        {isLoading ? 'Loading...' : 'Login'}
       </button>
 
     </form>
