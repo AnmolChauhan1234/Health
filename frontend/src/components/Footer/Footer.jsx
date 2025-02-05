@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-8 px-4 sm:px-6 lg:px-12">
+    <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-8 px-4 sm:px-6 lg:px-12 shadow-2xl shadow-gray-900 dark:shadow-gray-400 ">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Logo and Tagline */}
         <div>
           <h3 className="text-2xl font-bold ubuntu-regular italic">
             Health Easy
           </h3>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             Simplifying healthcare access for everyone, anytime, anywhere.
           </p>
         </div>
@@ -24,7 +24,7 @@ function Footer() {
             <li>
               <Link
                 to="/"
-                className="text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
               >
                 Home
               </Link>
@@ -32,23 +32,23 @@ function Footer() {
             <li>
               <Link
                 to="/about"
-                className="text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
               >
                 About Us
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to="/services"
-                className="text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
               >
                 Services
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 to="/contact"
-                className="text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
               >
                 Contact
               </Link>
@@ -64,26 +64,26 @@ function Footer() {
           <div className="mt-2 flex space-x-4">
             <Link
               to="/"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
             >
               <i className="fab fa-facebook-f"></i>
             </Link>
 
             <Link
               to="#"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
             >
               <i className="fab fa-twitter"></i>
             </Link>
             <Link
               to="#"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
             >
               <i className="fab fa-instagram"></i>
             </Link>
             <Link
               to="#"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-400 transition-colors"
             >
               <i className="fab fa-linkedin-in"></i>
             </Link>
@@ -92,7 +92,7 @@ function Footer() {
       </div>
 
       {/* Copyright Section */}
-      <div className="text-center text-gray-500 mt-6 text-sm">
+      <div className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
         &copy; {new Date().getFullYear()} Health Easy. All Rights Reserved.
       </div>
     </footer>

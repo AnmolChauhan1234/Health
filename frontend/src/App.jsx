@@ -7,7 +7,7 @@ import UserContextProvider from './context/UserContext/UserContextProvider';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 
 import Layout from './Layout';
-import {Home , About , Profile,Register} from './Pages/export';
+import {Home , About , Profile,Register,Contact} from './Pages/export';
 
 
 function App() {
@@ -19,7 +19,8 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route path='' element={<Home />} />
           <Route path='about' element={<About />} />
-          <Route path='profile' element={<Profile />} />
+          <Route path='profile' element={<Profile userRole={"hospital"}/>} />
+          <Route path='contact' element={<Contact />} />
         </Route>,
 
         {/* Routes for auth starts here*/}

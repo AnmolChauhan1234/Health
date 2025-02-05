@@ -5,5 +5,7 @@ import Map from "./Map/Map";
 import Login from "./Login/Login";
 import Singup from "./Signup/Singup";
 import ThreeDModel from "./ThreeDModel/ThreeDModel";
+import HospitalDashboard from "./Dashboard/HospitalDashboard/HospitalDashboard";
+import PatientDashboard from "./Dashboard/PatientDashboard/PatientDashboard";
 
-export {Header , Footer , ContentWrite , Map , Login , Singup , ThreeDModel};
+export {Header , Footer , ContentWrite , Map , Login , Singup , ThreeDModel,PatientDashboard, HospitalDashboard};
