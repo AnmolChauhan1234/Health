@@ -36,7 +36,7 @@ function Map() {
       <MapContainer
         center={currentLocation || [28.6139, 77.2090]} // Default center (New Delhi) or current location
         zoom={10}
-        className="h-[300px] sm:h-[500px] w-[90%]"
+        className="h-[300px] sm:h-[500px] w-[90%] mx-auto"
         // style={{ height: "500px", width: "100%" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

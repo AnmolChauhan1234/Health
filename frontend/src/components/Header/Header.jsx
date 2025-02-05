@@ -2,9 +2,11 @@ import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import { useMenuContext } from '../../context/MenuContext/MenuContextProvider';
+import { useUserContext } from '../../context/UserContext/UserContextProvider';
 
 function Header() {
   const { isOpen, toggleMenu } = useMenuContext();
+  const {user} = useUserContext();
 
   return (
     <header 
@@ -91,14 +93,29 @@ function Header() {
 
           {/* User section starts here */}
           <li>
-            <NavLink 
-              to='/profile'
-              className={({isActive}) => {
-                return `${isActive ? 'bg-gray-800 text-white dark:bg-white dark:text-gray-800 ubuntu-regular-italic': ''} rounded-[25px] py-1 px-3 `
-              }}
-            >
-              User
-            </NavLink>
+            
+            {user && 
+              <NavLink 
+                to='/profile'
+                className={({isActive}) => {
+                  return `${isActive ? 'bg-gray-800 text-white dark:bg-white dark:text-gray-800 ubuntu-regular-italic': ''} rounded-[25px] py-1 px-3 `
+                }}
+              >
+                User
+              </NavLink>
+            }
+
+            { !user && 
+              <NavLink 
+                to='/auth/register'
+                className={({isActive}) => {
+                  return `${isActive ? 'bg-gray-800 text-white dark:bg-white dark:text-gray-800 ubuntu-regular-italic': ''} rounded-[25px] py-1 px-3 `
+                }}
+              >
+                Login/Register
+              </NavLink>
+            }
+            
           </li>
           {/* User section ends here */}
 
