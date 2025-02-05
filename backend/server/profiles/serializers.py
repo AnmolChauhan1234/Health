@@ -27,3 +27,16 @@ class HospitalUpdateSerializer(serializers.ModelSerializer):
         fields = ['location', 'license_number', 'established_year', 'bed_capacity', 'emergency_services']
         extra_kwargs = {field: {'required': False} for field in fields}  
         # ✅ All fields are optional, so partial updates can be made
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    confirm_new_password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, data):
+        # Check if new password matches the confirmed new password
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError("New password and confirm password do not match.")
+        
+        return data
