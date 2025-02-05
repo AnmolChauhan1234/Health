@@ -5,11 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from accounts.models import User, Patient, Hospital
-from .serializers import UserUpdateSerializer, PatientUpdateSerializer, HospitalUpdateSerializer
+from .serializers import UserUpdateSerializer, PatientUpdateSerializer, HospitalUpdateSerializer, PasswordResetSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework import status
 
 class UpdateProfileView(APIView):
     # ✅ Ensures only authenticated users can update their profiles
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]
 
     # ✅ Allows handling file uploads (profile pictures) along with form data
     # parser_classes = (MultiPartParser, FormParser)  
@@ -42,3 +44,28 @@ class UpdateProfileView(APIView):
         # ✅ If no specific role is found, return only user data
         return Response({"user": user_serializer.data})
     
+
+class ResetPasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+
+        serializer = PasswordResetSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            old_password = serializer.validated_data['old_password']
+            new_password = serializer.validated_data['new_password']
+            
+            if not user.check_password(old_password):
+                raise AuthenticationFailed('Old password is incorrect.')
+
+            # Set the new password
+            user.set_password(new_password)
+            user.save()
+
+            return Response({
+                'message': 'Password reset successfully.'
+            }, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

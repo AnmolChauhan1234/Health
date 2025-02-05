@@ -16,7 +16,7 @@ def send_password_reset_email(sender, instance, created, update_fields=None, **k
         instance.otp_created_at = now()
         instance.save(update_fields=["otp", "otp_created_at"])
 
-        reset_link = f"http://localhost:8000/accounts/reset-password/{instance.reset_token}/"
+        reset_link = f"http://localhost:8000/accounts/forget-password/{instance.reset_token}/"
 
         print("before sending of email")
 

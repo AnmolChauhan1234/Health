@@ -155,6 +155,8 @@ class LogoutView(APIView):
 
     def post(self, request):
         user = request.user
+        user.refresh_token = None
+        user.save()
 
         response = Response({"message": "Logged out successfully"})
         return response
@@ -164,7 +166,7 @@ class LogoutView(APIView):
 
 User = get_user_model()
 
-class PasswordResetRequestView(APIView):
+class PasswordForgetRequestView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         email = request.data.get("email")
@@ -183,7 +185,7 @@ class PasswordResetRequestView(APIView):
 
 User = get_user_model()
 
-class PasswordResetView(APIView):
+class PasswordForgetView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, token):
@@ -208,3 +210,15 @@ class PasswordResetView(APIView):
         user.save()
 
         return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
+
+
+class DeleteUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+
+        user.deleter()
+
+        return Response({"message": "User deleted successfully"})
