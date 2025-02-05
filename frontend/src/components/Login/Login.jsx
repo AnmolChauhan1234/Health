@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import api from '../../hooks/apiInstance';
+import { useUserContext } from '../../context/UserContext/UserContextProvider';
 
 function Login() {
+
+  const {setUser} = useUserContext();
 
   const[formData , setFormData] = useState({
     email:"",
@@ -15,23 +19,55 @@ function Login() {
     });
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append('email' , formData.email);
-    data.append('password' , formData.password);
+    //Calling login api.
+    try {
+      const response = await api.post("/accounts/login/" , {
+        email: formData.email,
+        password: formData.password
+      })
 
-    //Log FormData content
-    // for (let pair of data.entries()) {
-    //   console.log(pair[0] + ": " + pair[1]);
-    // }
+      if(response.status === 200){
+
+        //setting user to true , means user is logged in.
+        setUser(true);
+
+        //destructure the access_token and message received.
+        const {access_token , message} = response.data;
+
+        //saving the token in session storage.
+        sessionStorage.setItem('token' , access_token);
+
+        //displaying message.
+        console.log(message);
+      }
+    } catch (error) {
+      console.error('Could not Login. Try Again.',error);
+    }
 
     //Clean up Submission.
     setFormData({
       email: "",
       password: ""
     })
+
+
+    // const data = new FormData();
+    // data.append('email' , formData.email);
+    // data.append('password' , formData.password);
+
+    // /accounts/login/
+
+
+
+    //Log FormData content
+    // for (let pair of data.entries()) {
+    //   console.log(pair[0] + ": " + pair[1]);
+    // }
+
+    
   }
 
   return (
