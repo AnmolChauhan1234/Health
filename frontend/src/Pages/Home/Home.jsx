@@ -64,7 +64,7 @@ function Home() {
       {/* Map box starts here */}
       {
         !isOpen && showMap && (
-          <section className='h-max w-full'>
+          <section className='h-max w-full '>
             <Map isDarkMode={darkMode}/>
           </section>
         )
