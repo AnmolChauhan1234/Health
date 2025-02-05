@@ -63,9 +63,37 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# # CORS Configuration
+# CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False") == "True"
+# CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+
+from corsheaders.defaults import default_headers
+
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False") == "True"
+CORS_ALLOW_CREDENTIALS = True  # ✅ Required for sending cookies (e.g., HttpOnly JWT tokens)
+CORS_ALLOW_ALL_ORIGINS = False  # ❌ Do not use True when using credentials
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Authorization",
+    "Content-Type",
+]
+
+# CSRF Configuration
+CSRF_COOKIE_SECURE = False  # ✅ Set to True in production (HTTPS required)
+CSRF_COOKIE_HTTPONLY = False  # ✅ Must be False so the frontend can read it
+CSRF_COOKIE_SAMESITE = "None"  # ✅ Required for cross-origin requests with cookies
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS  # ✅ Trusted origins for CSRF protection
+
+# Cookies & Sessions Settings (Needed for JWT & Cookies)
+SESSION_COOKIE_SECURE = False  # ✅ Set to True in production (HTTPS required)
+SESSION_COOKIE_HTTPONLY = True  # ✅ Prevent JS access to session cookies
+SESSION_COOKIE_SAMESITE = "None"  # ✅ Required for cross-origin authentication
+
+SECURE_COOKIE = False  # Change to True in production
+REFRESH_TOKEN_EXPIRATION = 86400  # 1 day in seconds
+
+
+
 
 
 REST_FRAMEWORK = {
