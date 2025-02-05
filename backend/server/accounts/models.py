@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 # Create your models here.
 
@@ -46,6 +47,9 @@ class User(AbstractUser):
     profile_picture = models.CharField(max_length=255, blank=True, null=True)  # Storing Cloudinary URL
     refresh_token = models.TextField(blank=True, null=True)  # Stores JWT Refresh Token
     joined_at = models.DateTimeField(auto_now_add=True)  # Timestamp when user registers
+    reset_token = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_created_at = models.DateTimeField(null=True, blank=True)
 
 
     # Set email as the USERNAME_FIELD (authentication field)

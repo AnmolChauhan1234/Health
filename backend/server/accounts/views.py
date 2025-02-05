@@ -9,6 +9,16 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import get_user_model
+import uuid
+from rest_framework.exceptions import ValidationError
+from datetime import timedelta
+from django.utils.timezone import now
+
+
 
 
 
@@ -114,3 +124,53 @@ class LogoutView(APIView):
 
         response = Response({"message": "Logged out successfully"})
         return response
+    
+
+
+
+User = get_user_model()
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            user.reset_token = uuid.uuid4()  # Generates a new reset token
+            user.save(update_fields=["reset_token"])  # Triggers the signal to send email
+            return Response({"message": "Reset password email sent."}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+
+User = get_user_model()
+
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, token):
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+        new_password = request.data.get("new_password")
+
+        try:
+            user = User.objects.get(email=email, otp=otp, reset_token=token)
+        except User.DoesNotExist:
+            raise ValidationError("Invalid OTP or reset token.")
+        
+
+        # Check OTP expiry (valid for 10 minutes)
+        if now() - user.otp_created_at > timedelta(minutes=10):
+            raise ValidationError("OTP expired. Request a new one.")
+        
+
+        user.set_password(new_password)
+        user.otp = None
+        user.reset_token = None
+        user.save()
+
+        return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
