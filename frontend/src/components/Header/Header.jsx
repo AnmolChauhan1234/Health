@@ -148,6 +148,7 @@ function Header() {
       {/* Mobile menu starts here */}
       {isOpen && (
         <div className="fixed inset-0 flex justify-end z-50">
+          
           {/* Background overlay */}
           <div
             className="bg-black opacity-50 w-1/2 h-full cursor-pointer"
@@ -155,8 +156,11 @@ function Header() {
           ></div>
 
           {/* Menu container */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 shadow-lg shadow-gray-300 dark:shadow-sm dark:shadow-black p-6 ubuntu-medium-italic text-base z-50 overflow-y-auto">
+          <div 
+            className="w-1/2 h-full bg-white dark:bg-gray-900 shadow-lg shadow-gray-300 dark:shadow-sm dark:shadow-black p-6 ubuntu-medium-italic text-base z-50 overflow-y-auto"
+          >
             <ul className="flex flex-col items-center gap-y-6">
+
               {/* Close button */}
               <li className="w-full flex justify-end">
                 <button
@@ -212,7 +216,7 @@ function Header() {
               <li className="w-full">
                 {user ? (
                   <NavLink
-                    to="/profile"
+                    to="/dashboard"
                     className={({ isActive }) => {
                       return `${
                         isActive
@@ -255,6 +259,7 @@ function Header() {
               </li>
             </ul>
           </div>
+
         </div>
       )}
       {/* Mobile menu ends here */}

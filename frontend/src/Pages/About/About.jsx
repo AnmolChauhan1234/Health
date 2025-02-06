@@ -3,7 +3,7 @@ import React from "react";
 function About() {
   return (
     <section 
-      className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 px-4 sm:px-6 lg:px-12"
+      className="min-h-[60vh] bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 px-4 sm:px-6 lg:px-12"
     >
 
       {/* Header and description section starts here */}
