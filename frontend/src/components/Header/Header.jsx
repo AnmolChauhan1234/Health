@@ -9,9 +9,9 @@ function Header() {
   const { isOpen, toggleMenu } = useMenuContext();
   const { user } = useUserContext();
 
-  // const profilePhoto = user?.profile_photo || "/images/user-dp.jpg";
+  const profilePhoto = user?.profile_photo || "/images/user-dp.jpg";
 
-  const profilePhoto = user?.profile_photo || "/images/vermil.jpg";
+  // const profilePhoto = user?.profile_photo || "/images/vermil.jpg";
 
   return (
     <header 
@@ -102,7 +102,7 @@ function Header() {
           <li>
             {user && (
               <NavLink
-                to="/profile"
+                to="/dashboard"
                 className={({ isActive }) => {
                   return `${
                     isActive

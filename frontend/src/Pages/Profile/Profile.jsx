@@ -1,8 +1,13 @@
 import React from "react";
 import { HospitalDashboard,PatientDashboard } from "../../components";
 
+function Profile({role}) {
 
-function Profile({ userRole }) {
+  // Get user role from local storage
+  // const {role} = useRole();
+  // const role = 'hospital';
+
+
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen p-6">
       {/* Profile Header */}
@@ -17,7 +22,7 @@ function Profile({ userRole }) {
 
       {/* Role-Based Dashboard */}
       <div className="max-w-6xl mx-auto mt-8">
-        {userRole === "patient" ? <PatientDashboard /> : <HospitalDashboard />}
+        {role === "patient" ? <PatientDashboard /> : <HospitalDashboard />}
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useUserContext } from '../../context/UserContext/UserContextProvider';
 
 function Signup() {
 
-  const {user , setUser} = useUserContext();
+  // const {user , setUser} = useUserContext();
 
   const [formData, setFormData] = useState({
     role: '',

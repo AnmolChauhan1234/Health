@@ -3,5 +3,9 @@ import Home from './Home/Home'
 import Profile from './Profile/Profile';
 import Register from './Register/Register';
 import Contact from './Contact/Contact';
+import MyAccount from './MyAccount/MyAccount';
+import Bills from './Bills/Bills';
+import History from './History/History';
+import Manage from './Manage/Manage';
 
-export {Home, About, Profile, Register , Contact};
+export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage};
