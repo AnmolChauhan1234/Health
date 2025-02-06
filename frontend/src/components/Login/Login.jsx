@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import api from '../../hooks/apiInstance';
 import { useUserContext } from '../../context/UserContext/UserContextProvider';
-import { useRole } from '../../context/RoleContext/RoleContextProvider';
+
 
 function Login() {
 
-  const {setUser} = useUserContext();
-  const{setRole} = useRole();
+  const {setUser , setUserRole} = useUserContext();
 
   const [isLoading , setIsLoading] = useState(false);
 
@@ -44,7 +43,7 @@ function Login() {
         const {access_token , message, role} = response.data;
 
         //saving the role.
-        setRole(role);
+        setUserRole(role);
 
         //saving the token in session storage.
         sessionStorage.setItem('token' , access_token);
