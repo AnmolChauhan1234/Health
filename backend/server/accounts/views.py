@@ -80,7 +80,8 @@ class LoginView(APIView):
 
             response = JsonResponse({
                 'access_token': access_token,
-                'message': 'Login successful'
+                'message': 'Login successful',
+                'role': user.role,
             }, status=status.HTTP_200_OK)
 
             # Store refresh token in HttpOnly cookie
