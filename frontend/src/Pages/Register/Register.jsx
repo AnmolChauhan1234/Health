@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Login from '../../components/Login/Login'
-import Signup from '../../components/Signup/Singup'
-import { ThreeDModel } from '../../components';
+// import Login from '../../components/Login/Login'
+// import Signup from '../../components/Signup/Singup'
+import { ThreeDModel , Login , Signup } from '../../components';
 
 function Register() {
 
