@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Hospital, Patient
+from .models import User, Hospital, Patient, Contact
 
 # Register your models here.
 
@@ -23,3 +23,5 @@ class PatientAdmin(admin.ModelAdmin):
     search_fields = ('user__full_name', 'user__email', 'blood_group')
 
 admin.site.register(Patient, PatientAdmin)
+
+admin.site.register(Contact)

@@ -1,6 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from .models import Contact
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.exceptions import AuthenticationFailed
@@ -230,3 +232,16 @@ class DeleteUser(APIView):
 @permission_classes([IsAuthenticated])
 def isAuth(request):
     return Response({"Authenticated": True, 'user': request.user.id})
+
+
+
+class ContactUs(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        name = request.data.get('name')
+        email = request.data.get('email')
+        message = request.data.get('message')
+
+        contact_us = Contact.objects.create(name=name, email=email, message=message)
+        return Response({"message": "Your message has been received!"}, status=201)
