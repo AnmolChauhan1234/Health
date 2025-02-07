@@ -17,6 +17,7 @@ import uuid
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta
 from django.utils.timezone import now
+from rest_framework.decorators import api_view, permission_classes
 
 
 from django.conf import settings
@@ -223,3 +224,9 @@ class DeleteUser(APIView):
         user.deleter()
 
         return Response({"message": "User deleted successfully"})
+    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def isAuth(request):
+    return Response({"Authenticated": True, 'user': request.user.id})
