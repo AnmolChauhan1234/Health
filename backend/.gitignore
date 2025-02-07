@@ -16,3 +16,6 @@ staticfiles/
 
 # Environment variables
 .env
+
+
+management/

@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken', 
     'accounts',
     'profiles',
+    'hospital_management'
 ]
 
 MIDDLEWARE = [
@@ -93,6 +94,8 @@ SESSION_COOKIE_SAMESITE = "None"  # ✅ Required for cross-origin authentication
 SECURE_COOKIE = False  # Change to True in production
 REFRESH_TOKEN_EXPIRATION = 86400  # 1 day in seconds
 
+CSRF_COOKIE_SECURE = False  # Since localhost is not HTTPS
+SESSION_COOKIE_SECURE = False
 
 
 
@@ -213,3 +216,8 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Your sender email
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # App password (not your real password)
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
