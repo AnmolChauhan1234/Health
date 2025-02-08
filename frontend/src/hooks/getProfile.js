@@ -23,7 +23,7 @@ const useGetProfile = () => {
       if (response.status === 200) {
         
         // storing the profile data.
-        console.log(response.data);
+        // console.log(response.data);
         setProfileData(response.data);
         
       } else {
