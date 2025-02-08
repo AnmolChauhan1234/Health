@@ -1,12 +1,11 @@
 import React from "react";
 import { HospitalDashboard,PatientDashboard } from "../../components";
+import useAuthRedirect from "../../hooks/authRedirect";
 
 function Profile({role}) {
 
-  // Get user role from local storage
-  // const {role} = useRole();
-  // const role = 'hospital';
-
+  //checking authentication.
+  useAuthRedirect();
 
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen p-6">

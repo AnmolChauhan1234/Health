@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import api from '../../hooks/apiInstance';
 import { useUserContext } from '../../context/UserContext/UserContextProvider';
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
+
+  //useNavigation
+  const navigate = useNavigate();
 
   const {setUser , setUserRole} = useUserContext();
 
@@ -37,10 +41,11 @@ function Login() {
 
         //setting user to true , means user is logged in.
         setUser(true);
-        localStorage.setItem('user' , true);
+        sessionStorage.setItem('user' , true);
 
         //destructure the access_token and message received.
         const {access_token , message, role} = response.data;
+        // console.log(role);
 
         //saving the role.
         setUserRole(role);
@@ -50,6 +55,10 @@ function Login() {
 
         //displaying message.
         console.log(message);
+
+        //navigate
+        navigate("/dashboard");
+
       }
     } catch (error) {
       console.error('Could not Login. Try Again.',error);
@@ -131,7 +140,7 @@ function Login() {
         className={`w-[80%] text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer ${isLoading ? 'bg-amber-400 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-400'}`}
         disabled={isLoading}
       >
-        {isLoading ? 'Loading...' : 'Login'}
+        {isLoading ? 'Logging in...' : 'Login'}
       </button>
 
     </form>

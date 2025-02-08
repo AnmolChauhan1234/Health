@@ -148,7 +148,7 @@ function Header() {
       {/* Mobile menu starts here */}
       {isOpen && (
         <div className="fixed inset-0 flex justify-end z-50">
-          
+
           {/* Background overlay */}
           <div
             className="bg-black opacity-50 w-1/2 h-full cursor-pointer"

@@ -3,17 +3,17 @@ import UserContext from './UserContext';
 
 function UserContextProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     return storedUser === 'true';
   });
 
   const [userRole, setUserRole] = useState(() => {
-    const storedUserRole = localStorage.getItem('role');
+    const storedUserRole = sessionStorage.getItem('role');
     return storedUserRole ? JSON.parse(storedUserRole) : 'patient';
   });
 
   useEffect(() => {
-    localStorage.setItem('role', JSON.stringify(userRole));
+    sessionStorage.setItem('role', JSON.stringify(userRole));
   }, [userRole]);
 
   return (
