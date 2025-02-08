@@ -12,7 +12,7 @@ admin.site.register(User, UserAdmin)
 
 # Register the Hospital model
 class HospitalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location', 'license_number')
+    list_display = ('user', 'hospital_address', 'license_number')
     search_fields = ('user__full_name', 'user__email', 'location')
 
 admin.site.register(Hospital, HospitalAdmin)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+# from django.contrib.gis.db import models  # Import GIS models
 
 # Create your models here.
 
@@ -68,11 +69,12 @@ class User(AbstractUser):
 # 2️⃣ Hospital Model
 class Hospital(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    location = models.CharField(max_length=255, blank=True, null=True)  # Optional field
+    hospital_address = models.CharField(max_length=255, blank=True, null=True)  # Optional field
     license_number = models.CharField(max_length=50, unique=True, blank=True, null=True)  # Optional
     established_year = models.PositiveIntegerField(blank=True, null=True)  # Optional
     bed_capacity = models.PositiveIntegerField(default=0, blank=True, null=True)  # Optional
     emergency_services = models.BooleanField(default=False)  # Optional (default is False)
+    # location = models.PointField()  # Geospatial field
 
     def __str__(self):
         return self.user.full_name  # Uses full name from User model

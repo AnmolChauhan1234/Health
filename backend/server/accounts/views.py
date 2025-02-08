@@ -223,7 +223,7 @@ class DeleteUser(APIView):
     def post(self, request):
         user = request.user
 
-        user.deleter()
+        user.delete()
 
         return Response({"message": "User deleted successfully"})
     
