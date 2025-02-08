@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import api from '../../hooks/apiInstance';
 import { useUserContext } from '../../context/UserContext/UserContextProvider';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../Modal/Modal';
 
 
 function Login() {
@@ -10,8 +11,16 @@ function Login() {
   const navigate = useNavigate();
 
   const {setUser , setUserRole} = useUserContext();
-
   const [isLoading , setIsLoading] = useState(false);
+
+  //modal settings.
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalMessage , setModalMessage] = useState('');
+  const [statusCode, setStatusCode] = useState('');
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
 
   const[formData , setFormData] = useState({
     email:"",
@@ -32,6 +41,7 @@ function Login() {
 
     //Calling login api.
     try {
+
       const response = await api.post("/accounts/login/" , {
         email: formData.email,
         password: formData.password
@@ -55,40 +65,44 @@ function Login() {
 
         //displaying message.
         console.log(message);
+        // setIsModalOpen(true);
+        // setModalMessage(message);
+        // setStatusCode("success");
+        // setPath('/dashboard')
 
         //navigate
         navigate("/dashboard");
 
+      } else {
+        //displaying error message.
+        setIsModalOpen(true);
+        setModalMessage("Invalid Email or Password");
+        setStatusCode("error");
+
       }
     } catch (error) {
+
+      //displaying message.
+      setIsModalOpen(true);
+      setModalMessage("Server Error.");
+      setStatusCode("error");
+
       console.error('Could not Login. Try Again.',error);
+
+    } finally{
+      setIsLoading(false);
+
+      //Clean up Submission.
+      setFormData({
+        email: "",
+        password: ""
+      })
     }
-
-    //Clean up Submission.
-    setFormData({
-      email: "",
-      password: ""
-    })
-    setIsLoading(false);
-
-
-    // const data = new FormData();
-    // data.append('email' , formData.email);
-    // data.append('password' , formData.password);
-
-    // /accounts/login/
-
-
-
-    //Log FormData content
-    // for (let pair of data.entries()) {
-    //   console.log(pair[0] + ": " + pair[1]);
-    // }
-
-    
   }
 
   return (
+    <>
+    <Modal isOpen={isModalOpen} closeModal={closeModal} message={modalMessage} statusCode={statusCode}/>
     <form
       onSubmit={handleSubmit}
       className='border-[1px] border-gray-300 dark:border-gray-400 h-max w-[80vw] sm:w-96 flex flex-col gap-y-2 px-3 py-5 mx-auto shadow-md shadow-gray-200 dark:shadow-gray-500 text-black dark:text-white ubuntu-medium-italic rounded-md'
@@ -144,6 +158,7 @@ function Login() {
       </button>
 
     </form>
+    </>
   )
 }
 

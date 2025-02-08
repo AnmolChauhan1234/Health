@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import api from '../../hooks/apiInstance'
-import { useUserContext } from '../../context/UserContext/UserContextProvider';
+import Modal from '../Modal/Modal';
 
 function Signup() {
 
-  // const {user , setUser} = useUserContext();
+  const [loading , setIsLoading] = useState(false);
+
+  const [isModalOpen, setisModalOpen] = useState(false)
+  const [modalMessage , setModalMessage] = useState('');
+  const [statusCode, setstatusCode] = useState('')
+
+  const closeModal = () => {
+    setisModalOpen(false)
+    
+  }
 
   const [formData, setFormData] = useState({
     role: '',
@@ -27,12 +36,24 @@ function Signup() {
   // Password Validity
   const validPassword =(password , confirmPassword) => {
     if(password !== confirmPassword){
-      alert('password field do not match');
+
+      //activating the modal for popups.
+      setisModalOpen(true);
+      setModalMessage("Password fields do not match");
+      setstatusCode("warning");
+      
+      // alert('password field do not match');
       return false;
     }
 
     if(password.length < 8){
-      alert('password must be at least 8 characters long');
+      
+      //activating the modal for popups.
+      setisModalOpen(true);
+      setModalMessage("Password must be at least 8 characters long");
+      setstatusCode("warning");
+
+      // alert('password must be at least 8 characters long');
       return false;
     }
 
@@ -53,12 +74,24 @@ function Signup() {
   //checks for only phone number validity.
   const validPhoneNumber = (phoneNumber) => {
     if(phoneNumber.length !== 10){
-      alert('Phone Number cannot be less than 10 digits.');
+      
+      //activating the modal for popups.
+      setisModalOpen(true);
+      setModalMessage("Phone Number cannot be less than 10 digits.");
+      setstatusCode("warning");
+
+      // alert('Phone Number cannot be less than 10 digits.');
       return false;
     }
 
     if(!containsOnlyNumber(phoneNumber)){
-      alert('Phone Number need to have only numeric digits.');
+
+      //activating the modal for popups.
+      setisModalOpen(true);
+      setModalMessage("Phone Number need to have only numeric digits.'");
+      setstatusCode("warning");
+
+      // alert('Phone Number need to have only numeric digits.');
       return false;
     }
     return true;
@@ -79,10 +112,12 @@ function Signup() {
   //Handle Submit function.
   const handleSubmit = async (e) => {
     e.preventDefault();
+    //set loading to true.
+    setIsLoading(true);
 
     //Validation checks
     if(!validPassword(formData.password , formData.confirmPassword) || !validPhoneNumber(formData.phoneNumber)){
-      cleanForm();
+      // cleanForm();
       return;
     }
 
@@ -102,20 +137,34 @@ function Signup() {
         sessionStorage.setItem('token' , response.data.access_token);
 
         //displaying the message received.
-        console.log(response.data.message);
+        setisModalOpen(true);
+        setModalMessage(response.data.message);
+        setstatusCode("success");
 
-        //setting user to true, for context use.
-        // setUser(true);
+        //field clean-up
+        cleanForm();
+
       } else {
-        console.log('Could not Register. Try again later');
+
+        setisModalOpen(true);
+        setModalMessage("Could not Register Account. Try again later");
+        setstatusCode("error");
+        // console.log('Could not Register. Try again later');
       }
 
     } catch (error) {
+      //display the message to user
+      setisModalOpen(true);
+      setModalMessage("Server Error.");
+      setstatusCode("error");
+      
+      //for devs error log.
       console.error('Sign-up Failed.' , error);
+    } finally{
+      setIsLoading(false);
     }
 
-    //field clean-up
-    cleanForm();
+    
 
     // /accounts/register/
     // Creating data to send to the backend.
@@ -136,6 +185,14 @@ function Signup() {
   };
 
   return (
+
+    <>
+    <Modal 
+      isOpen={isModalOpen} 
+      message={modalMessage} 
+      closeModal={closeModal} 
+      statusCode={statusCode} 
+    />
     <form
       onSubmit={handleSubmit}
       className="border-[1px] border-gray-300 dark:border-gray-400 h-max w-[80vw] sm:w-96 flex flex-col gap-y-2 px-3 py-5 mx-auto shadow-md shadow-gray-200 dark:shadow-gray-500 text-black dark:text-white ubuntu-medium-italic rounded-md text-sm sm:text-base transition-cus"
@@ -252,12 +309,16 @@ function Signup() {
 
       <button
         type="submit"
-        className="w-full bg-amber-500 hover:bg-amber-400 text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer"
+        className={`w-full  text-white font-medium mx-auto mt-1 py-1 rounded-sm cursor-pointer ${loading ? 'bg-amber-400' : 'bg-amber-500 hover:bg-amber-400'}`}
+        disabled={loading}
       >
-        Sign Up
+        {
+          loading ? 'Signing up...' : 'Sign up'
+        }
       </button>
 
     </form>
+    </>
   );
 }
 

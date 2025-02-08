@@ -1,7 +1,7 @@
 import { useEffect,useState } from "react";
 import api from "./apiInstance";
 
-const useAuth = async () => {
+const useAuth = () => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 

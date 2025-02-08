@@ -10,7 +10,7 @@ const useAuthRedirect = () => {
   useEffect(
     () => 
       {
-        if (!isAuthenticated) {
+        if (isAuthenticated === false) {
           navigate("/auth/register");
         }
       }, [isAuthenticated, navigate]

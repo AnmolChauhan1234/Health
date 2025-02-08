@@ -2,12 +2,23 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../hooks/apiInstance";
 import { useUserContext } from "../../../context/UserContext/UserContextProvider";
+import Modal from "../../Modal/Modal";
 
 function PatientDashboard() {
 
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useUserContext();
   const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalMessage , setModalMessage] = useState('');
+  const [statusCode, setStatusCode] = useState('')
+  const [path, setPath] = useState('/');
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    if(path) navigate(path);
+  }
 
   //logout function.
   const handleLogout = async () => {
@@ -19,7 +30,8 @@ function PatientDashboard() {
       const response = await api.post("/accounts/logout/");
 
       if (response.status === 200) {
-        console.log(response.data.message);
+
+        // console.log(response.data.message);
 
         //clearing localStorage and session state and token
         localStorage.clear();
@@ -29,7 +41,12 @@ function PatientDashboard() {
         setUser(false);
         sessionStorage.setItem('user', false);
 
-        navigate('/');
+        //displaying the message received.
+        setIsModalOpen(true);
+        setModalMessage(response.data.message);
+        setStatusCode("success");
+        setPath('/')
+
       } else {
         console.log('Could not logout. Try again.');
       }
@@ -42,6 +59,9 @@ function PatientDashboard() {
   };
 
   return (
+    <>
+      <Modal isOpen={isModalOpen} closeModal={closeModal} message={modalMessage} statusCode={statusCode}/>
+    
     <section className="space-y-6">
       <h2 className="text-2xl font-semibold ubuntu-regular italic">
         Patient Dashboard
@@ -112,6 +132,7 @@ function PatientDashboard() {
       </button>
       {/* Logout button ends here */}
     </section>
+    </>
   );
 }
 

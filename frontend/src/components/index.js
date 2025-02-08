@@ -15,6 +15,6 @@ import PatientDashboard from "./Dashboard/PatientDashboard/PatientDashboard";
 import PatientAccount from "./Account/PatientAccount/PatientAccount";
 import PatientHistory from "./History/PatientHistory/PatientHistory";
 import PatientBill from "./Bill/PatientBill/PatientBill";
+import Modal from "./Modal/Modal";
 
-
-export {Header , Footer , ContentWrite , Map , Login , Signup , ThreeDModel,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory};
+export {Header , Footer , ContentWrite , Map , Login , Signup , ThreeDModel,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal};
