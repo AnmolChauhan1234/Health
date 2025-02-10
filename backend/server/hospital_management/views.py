@@ -41,6 +41,7 @@ class ShowDoctorInHospitalView(APIView):
 
         results = [
             {
+                "doctorId": doctor.doctor.id,
                 "doctorName": doctor.doctor.doctor_name,
                 "doctorImage": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
                 "education": doctor.doctor.education,
@@ -73,6 +74,7 @@ class ShowServiceInHospitalView(APIView):
 
         results = [
             {
+                "serviceId": service.service.id,
                 "serviceName": service.service.name,
                 "serviceType": service.service.type,
                 "servicDescription": service.service.description,
@@ -100,6 +102,7 @@ class ShowTreatmentInHospitalView(APIView):
 
         results = [
             {
+                "treatmentId": treatment.treatment.id,
                 "treatmentName": treatment.treatment.name,
                 "treatmentDescription": treatment.treatment.description,
                 "treatmentType": treatment.treatment.type,
