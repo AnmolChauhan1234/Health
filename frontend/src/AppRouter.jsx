@@ -6,6 +6,7 @@ import Layout from './Layout';
 import { Home, About, Profile, Register, Contact, MyAccount, History, Bills, Manage } from './Pages/export';
 
 function AppRouter() {
+  
   const { userRole } = useUserContext();
 
   const router = createBrowserRouter(
