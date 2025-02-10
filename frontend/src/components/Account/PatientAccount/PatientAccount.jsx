@@ -59,30 +59,7 @@ function PatientAccount() {
     localStorage.setItem("changePassword", isChangePasswordOn);
   }, [isEditing, isChangePasswordOn]);
 
-  // Set form data and DP when profileData is loaded
-  useEffect(() => {
-
-    if (profileData) {
-      setFormData({
-        name: profileData.userProfile?.name || "",
-        email: profileData.userProfile?.email || "",
-        phoneNumber: profileData.userProfile?.phoneNumber || "",
-
-        address: profileData.roleSpecificProfile?.address || "",
-        age: profileData.roleSpecificProfile?.age || "",
-        bloodGroup: profileData.roleSpecificProfile?.bloodGroup || "",
-
-        emergencyContact:
-          profileData.roleSpecificProfile?.emergencyContact || "",
-        gender: profileData.roleSpecificProfile?.gender || "",
-
-        medicalHistory: profileData.roleSpecificProfile?.medicalHistory || "",
-      });
-
-      //setting dp to the profile data received
-      setDp(profileData.userProfile?.profilePicture || "/images/user-dp.jpg");
-    }
-  }, [profileData]);
+ 
 
   // Handle file upload for DP to cloudinary
   const handleFileChange = async (e) => {
@@ -112,6 +89,33 @@ function PatientAccount() {
     setFormData({ ...formData, [name]: value });
   };
 
+
+   // Set form data and DP when profileData is loaded
+  useEffect(() => {
+
+    if (profileData) {
+      setFormData({
+        name: profileData.userProfile?.name || "",
+        email: profileData.userProfile?.email || "",
+        phone_number: profileData.userProfile?.phoneNumber || "",
+
+        address: profileData.roleSpecificProfile?.address || "",
+        age: profileData.roleSpecificProfile?.age || "",
+        blood_group: profileData.roleSpecificProfile?.bloodGroup || "",
+
+        emergency_contact:
+          profileData.roleSpecificProfile?.emergencyContact || "",
+        gender: profileData.roleSpecificProfile?.gender || "",
+
+        medical_history: profileData.roleSpecificProfile?.medicalHistory || "",
+      });
+
+      //setting dp to the profile data received
+      setDp(profileData.userProfile?.profilePicture || "/images/user-dp.jpg");
+    }
+  }, [profileData]);
+
+
   // Handle form submission
   const handleSubmit = async (e) => {
 
@@ -137,15 +141,24 @@ function PatientAccount() {
       return;
     }
 
+    // console.log(updatedFields);
+
     const isSuccess = await updateProfile(updatedFields);
     if (isSuccess) {
+
+      //refetch Profile.
       refetchProfile();
+
+      //display message
       setIsOpen(true);
       setModalMessag("Profile updated successfully!");
       setStatusCode("info");
+
+      //updating the states of editing.
+      setIsEditing(false);
       // alert("Profile updated successfully!");
     } else {
-
+      //display message
       setIsOpen(true);
       setModalMessag("Failed to update profile.");
       setStatusCode("error");

@@ -47,24 +47,7 @@ function HospitalAccount() {
     localStorage.setItem("edit", isEditing);
   }, [isEditing]);
 
-  // Set form data and DP when profileData is loaded
-  useEffect(() => {
-    if (profileData) {
-      setFormData({
-        name: profileData.userProfile?.name || "",
-        email: profileData.userProfile?.email || "",
-        phoneNumber: profileData.userProfile?.phoneNumber || "",
-        hospitalAddress: profileData.roleSpecificProfile?.hospitalAddress || "",
-        licenseNumber: profileData.roleSpecificProfile?.licenseNumber || "",
-        establishedYear: profileData.roleSpecificProfile?.establishedYear || "",
-        bedCapacity: profileData.roleSpecificProfile?.bedCapacity || 0,
-        emergencyServices: profileData.roleSpecificProfile?.emergencyServices || false,
-      });
-
-      // Set DP to the profile data received
-      setDp(profileData.userProfile?.profilePicture || "/images/user-dp.jpg");
-    }
-  }, [profileData]);
+  
 
   // Handle file upload for DP to Cloudinary
   const handleFileChange = async (e) => {
@@ -73,7 +56,7 @@ function HospitalAccount() {
 
     const cloudinaryImageUrl = await uploadToCloudinary(file, "hospital");
     if (cloudinaryImageUrl) {
-      const isSuccess = await updateProfile({ profilePicture: cloudinaryImageUrl });
+      const isSuccess = await updateProfile({ profile_picture: cloudinaryImageUrl });
       if (isSuccess) {
         setDp(cloudinaryImageUrl);
         refetchProfile();
@@ -94,6 +77,29 @@ function HospitalAccount() {
     setFormData({ ...formData, [name]: checked });
   };
 
+
+  // Set form data and DP when profileData is loaded
+  useEffect(() => {
+    if (profileData) {
+      setFormData({
+        full_name: profileData.userProfile?.name || "",
+        email: profileData.userProfile?.email || "",
+        phone_number: profileData.userProfile?.phoneNumber || "",
+
+        hospital_address: profileData.roleSpecificProfile?.hospitalAddress || "",
+        license_number: profileData.roleSpecificProfile?.licenseNumber || "",
+        established_year: profileData.roleSpecificProfile?.establishedYear || "",
+
+        bed_capacity: profileData.roleSpecificProfile?.bedCapacity || 0,
+        emergency_services: profileData.roleSpecificProfile?.emergencyServices || false,
+      });
+
+      // Set DP to the profile data received
+      setDp(profileData.userProfile?.profilePicture || "/images/user-dp.jpg");
+    }
+  }, [profileData]);
+
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,6 +114,8 @@ function HospitalAccount() {
       }
     });
 
+    // console.log(updatedFields);
+
     if (Object.keys(updatedFields).length === 0) {
       setIsOpen(true);
       setModalMessage("No changes detected!!");
@@ -117,11 +125,19 @@ function HospitalAccount() {
 
     const isSuccess = await updateProfile(updatedFields);
     if (isSuccess) {
+      // Refetch Profile.
       refetchProfile();
+
+      //display message.
       setIsOpen(true);
       setModalMessage("Profile updated successfully!");
       setStatusCode("info");
+
+      //Edit to false;
+      setIsEditing(false);
     } else {
+
+      //display message.
       setIsOpen(true);
       setModalMessage("Failed to update profile.");
       setStatusCode("error");
@@ -137,6 +153,9 @@ function HospitalAccount() {
     );
   }
   if (!profileData) return <div>No profile data found.</div>;
+
+
+  // UI Code 
 
   return (
     <>
@@ -187,103 +206,23 @@ function HospitalAccount() {
         <h2 className="text-2xl font-semibold mb-4">Profile</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 ubuntu-regular-italic">
+
           {/* General Information */}
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Phone Number:</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          {/* Hospital-Specific Information */}
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Hospital Address:</label>
-            <input
-              type="text"
-              name="hospitalAddress"
-              value={formData.hospitalAddress}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">License Number:</label>
-            <input
-              type="text"
-              name="licenseNumber"
-              value={formData.licenseNumber}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Established Year:</label>
-            <input
-              type="text"
-              name="establishedYear"
-              value={formData.establishedYear}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Bed Capacity:</label>
-            <input
-              type="number"
-              name="bedCapacity"
-              value={formData.bedCapacity}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-base font-medium text-gray-700">Emergency Services:</label>
-            <input
-              type="checkbox"
-              name="emergencyServices"
-              checked={formData.emergencyServices}
-              onChange={handleCheckboxChange}
-              disabled={!isEditing}
-              className="ml-2"
-            />
-          </div>
+          {Object.keys(formData).map((key) => (
+            <div key={key} className="space-y-1">
+              <label className="block text-base font-medium text-gray-700">
+                {key.charAt(0).toUpperCase() + key.slice(1)}:
+              </label>
+              <input
+                type="text"
+                name={key}
+                value={formData[key]}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
+              />
+            </div>
+          ))}
 
           {/* Update button */}
           <button
