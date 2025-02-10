@@ -63,7 +63,6 @@ class HospitalService(models.Model):
     def __str__(self):
         return f"{self.service} at {self.hospital}"
 
-
 class Treatment(models.Model):
     TREATMENT_TYPES = [
         ('cardiology', 'Cardiology Treatments'),

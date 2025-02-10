@@ -24,7 +24,7 @@ class PatientUpdateSerializer(serializers.ModelSerializer):
 class HospitalUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital  # Refers to the Hospital model
-        fields = ['location', 'license_number', 'established_year', 'bed_capacity', 'emergency_services']
+        fields = ['hospital_address', 'license_number', 'established_year', 'bed_capacity', 'emergency_services']
         extra_kwargs = {field: {'required': False} for field in fields}  
         # ✅ All fields are optional, so partial updates can be made
 
