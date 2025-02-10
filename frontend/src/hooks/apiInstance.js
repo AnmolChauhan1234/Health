@@ -24,7 +24,7 @@ api.interceptors.request.use(
 
   //handle errors via Promise.reject(error);
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(new Error(error));
   }
 );
 
@@ -53,7 +53,7 @@ api.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(new Error(error));
   }
 
 )
