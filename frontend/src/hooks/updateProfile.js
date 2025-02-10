@@ -17,7 +17,7 @@ const useUpdateProfile = () => {
       const response =await api.patch("/profiles/update/" , file);
 
       //checking response.
-      if(response.data === true){
+      if(response.status === 200){
         return true;
       }
 

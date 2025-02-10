@@ -15,7 +15,7 @@ const useAuth = () => {
         const { isAuthenticated, message } = response.data;
 
         //display message.
-        console.log(message);
+        // console.log(message);
 
         //setIsauthencticated
         setIsAuthenticated(isAuthenticated);
