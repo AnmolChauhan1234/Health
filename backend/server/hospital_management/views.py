@@ -23,11 +23,99 @@ from .models import Doctor, HospitalDoctor, Service, HospitalService, Treatment,
 # Create your views here.
 
 
-
+# view doctor in our hospital
 # search doctor using real time search
 # add doctor
 # delete doctor aready exists
 # edit doctor aready exists
+
+
+
+# view
+class ShowDoctorInHospitalView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        doctors = HospitalDoctor.objects.all()
+
+        results = [
+            {
+                "doctorName": doctor.doctor.doctor_name,
+                "doctorImage": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
+                "education": doctor.doctor.education,
+                "experience": doctor.doctor.experience,
+                "availability": doctor.doctor.availability,
+                "appointmentFeesInHospital": doctor.appointment_fees_in_hospital,
+                "specializationInHospital": doctor.specialization_in_hospital,
+                "consultationDays": doctor.consultation_days,
+                "addedOn": doctor.added_on,
+            }
+            for doctor in doctors  # Iterate correctly
+        ]
+
+        return Response({
+            "doctorDetails": results
+            },
+            status=201
+        )
+
+
+
+
+# view
+class ShowServiceInHospitalView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        services = HospitalService.objects.all()
+
+        results = [
+            {
+                "serviceName": service.service.name,
+                "serviceType": service.service.type,
+                "servicDescription": service.service.description,
+                "available_24x7": service.service.available_24x7,
+                "availableSlots": service.available_slots,
+                "serviceCost": service.cost,
+            }
+            for service in services  # Iterate correctly
+        ]
+
+        return Response({
+            "serviceDetails": results
+            },
+            status=201
+        )
+
+
+# view
+class ShowTreatmentInHospitalView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        treatments = HospitalTreatment.objects.all()
+
+        results = [
+            {
+                "treatmentName": treatment.treatment.name,
+                "treatmentDescription": treatment.treatment.description,
+                "treatmentType": treatment.treatment.type,
+                "treatmentCost": treatment.cost,
+                "doctorRequired": treatment.doctor_required,
+            }
+            for treatment in treatments  # Iterate correctly
+        ]
+
+        return Response({
+            "treatmentDetails": results
+            },
+            status=201
+        )
+
+
 
 
 # add
