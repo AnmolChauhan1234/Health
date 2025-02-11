@@ -59,7 +59,7 @@ class HospitalService(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     available_slots = models.IntegerField(default=0)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    cost = models.DecimalField(default=100, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return f"{self.service} at {self.hospital}"
@@ -85,7 +85,7 @@ class Treatment(models.Model):
 class HospitalTreatment(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    cost = models.DecimalField(default=100, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     doctor_required = models.BooleanField(default=True)  # If a doctor is needed for this treatment
 
     def __str__(self):
