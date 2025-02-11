@@ -43,7 +43,7 @@ class ShowDoctorInHospitalView(APIView):
         results = [
             {
                 "nonUpdatable": {
-                    "doctor_id": doctor.doctor.id,
+                    "id": doctor.doctor.id,
                     "doctor_name": doctor.doctor.doctor_name,
                     "doctor_image": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
                     "education": doctor.doctor.education,
@@ -76,17 +76,23 @@ class ShowServiceInHospitalView(APIView):
 
     def get(self, request):
 
-        services = HospitalService.objects.all()
+        user = request.user
+        hospital = get_object_or_404(Service, user=user)
+        services = HospitalService.objects.filter(hospital=hospital)
 
         results = [
             {
-                "serviceId": service.service.id,
-                "serviceName": service.service.name,
-                "serviceType": service.service.type,
-                "servicDescription": service.service.description,
-                "available_24x7": service.service.available_24x7,
-                "availableSlots": service.available_slots,
-                "serviceCost": service.cost,
+                "nonUpdatable": {
+                    "id": service.service.id,
+                    "name": service.service.name,
+                    "description": service.service.description,
+                    "type": service.service.type,
+                    "available_24x7": service.service.available_24x7,
+                },
+                "updatable": {
+                    "available_slots": service.available_slots,
+                    "cost": service.cost,
+                }
             }
             for service in services  # Iterate correctly
         ]
@@ -104,16 +110,22 @@ class ShowTreatmentInHospitalView(APIView):
 
     def get(self, request):
 
-        treatments = HospitalTreatment.objects.all()
+        user = request.user
+        hospital = get_object_or_404(Treatment, user=user)
+        treatments = HospitalTreatment.objects.filter(hospital=hospital)
 
         results = [
             {
-                "treatmentId": treatment.treatment.id,
-                "treatmentName": treatment.treatment.name,
-                "treatmentDescription": treatment.treatment.description,
-                "treatmentType": treatment.treatment.type,
-                "treatmentCost": treatment.cost,
-                "doctorRequired": treatment.doctor_required,
+                "nonUpdatable": {
+                    "id": treatment.treatment.id,
+                    "name": treatment.treatment.name,
+                    "description": treatment.treatment.description,
+                    "type": treatment.treatment.type,
+                },
+                "updatable": {
+                    "doctor_required": treatment.doctor_required,
+                    "cost": treatment.cost,
+                }
             }
             for treatment in treatments  # Iterate correctly
         ]
