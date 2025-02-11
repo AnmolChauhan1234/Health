@@ -327,7 +327,7 @@ class EditHospitalManagement(APIView):
         hospital = get_object_or_404(Hospital, user=user)
 
         # Handling Doctors
-        if facility_type == 'Doctor':
+        if facility_type == 'doctor':
             doctor = get_object_or_404(Doctor, id=facility_type_id)
             hospital_doctor = get_object_or_404(HospitalDoctor, hospital=hospital, doctor=doctor)
 
@@ -338,7 +338,7 @@ class EditHospitalManagement(APIView):
             return Response({"message": "Doctor details updated successfully"}, status=200)
 
         # Handling Services
-        elif facility_type == 'Service':
+        elif facility_type == 'service':
             service = get_object_or_404(HospitalService, id=facility_type_id, hospital=hospital)
 
             for field, value in update_data.items():
@@ -348,7 +348,7 @@ class EditHospitalManagement(APIView):
             return Response({"message": "Service details updated successfully"}, status=200)
 
         # Handling Treatments
-        elif facility_type == 'Treatment':
+        elif facility_type == 'treatment':
             treatment = get_object_or_404(HospitalTreatment, id=facility_type_id, hospital=hospital)
 
             for field, value in update_data.items():
