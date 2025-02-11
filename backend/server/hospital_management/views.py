@@ -77,7 +77,7 @@ class ShowServiceInHospitalView(APIView):
     def get(self, request):
 
         user = request.user
-        hospital = get_object_or_404(Service, user=user)
+        hospital = get_object_or_404(Hospital, user=user)
         services = HospitalService.objects.filter(hospital=hospital)
 
         results = [
@@ -111,7 +111,7 @@ class ShowTreatmentInHospitalView(APIView):
     def get(self, request):
 
         user = request.user
-        hospital = get_object_or_404(Treatment, user=user)
+        hospital = get_object_or_404(Hospital, user=user)
         treatments = HospitalTreatment.objects.filter(hospital=hospital)
 
         results = [
@@ -357,22 +357,26 @@ class EditHospitalManagement(APIView):
 
         # Handling Services
         elif facility_type == 'service':
-            service = get_object_or_404(HospitalService, id=facility_type_id, hospital=hospital)
+            service = get_object_or_404(Service, id=facility_type_id)
+            hospital_service = get_object_or_404(HospitalService, hospital=hospital, service=service)
+
 
             for field, value in update_data.items():
-                setattr(service, field, value)
+                setattr(hospital_service, field, value)
 
-            service.save()
+            hospital_service.save()
             return Response({"message": "Service details updated successfully"}, status=200)
 
         # Handling Treatments
         elif facility_type == 'treatment':
-            treatment = get_object_or_404(HospitalTreatment, id=facility_type_id, hospital=hospital)
+            treatment = get_object_or_404(Treatment, id=facility_type_id)
+            hospital_treatment = get_object_or_404(HospitalTreatment, hospital=hospital, treatment=treatment)
+
 
             for field, value in update_data.items():
-                setattr(treatment, field, value)
+                setattr(hospital_treatment, field, value)
 
-            treatment.save()
+            hospital_treatment.save()
             return Response({"message": "Treatment details updated successfully"}, status=200)
 
         else:
