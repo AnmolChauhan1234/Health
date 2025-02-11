@@ -1,71 +1,53 @@
 import React, { useState } from "react";
-import useCloudinaryUpload from "../../hooks/cloudinary";
-
 
 function DataTable({ data = [], loading, error, type, onEdit }) {
-
   const [editingId, setEditingId] = useState(null);
   const [updatedData, setUpdatedData] = useState({});
   const [expandedId, setExpandedId] = useState(null);
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState("");
 
-  // console.log(data);
-
-  //using cloudinary to upload the image.
-  const {uploadToCloudinary, uploading, error: uploadError,} = useCloudinaryUpload();
-
-  //handle edit functionality
+  // Handle edit functionality
   const handleEditClick = (id, currentData) => {
     setEditingId(id);
-    setUpdatedData(currentData);
+    setUpdatedData(currentData); // Set the current updatable data for editing
   };
 
-  //Cancle button functionality
+  // Cancel button functionality
   const handleCancelClick = () => {
     setEditingId(null);
     setUpdatedData({});
-    setFile(null);
-    setFileName("");
   };
 
+  // Save button functionality
   const handleSaveClick = (id) => {
-    console.log(type);
+    // Prepare the data to be sent for editing
+    // const dataToSend = {
+    //   nonUpdatable: data.find((item) => item.nonUpdatable.doctor_id === id)
+    //     .nonUpdatable,
+    //   updatable: updatedData, // Send only the updated updatable fields
+    // };
+
+    // console.log("handle save click", dataToSend);
+
+    // Call the onEdit function with the correct structure
     onEdit(type, id, updatedData);
+
+    // Reset editing state
     setEditingId(null);
+    setUpdatedData({});
   };
 
+  // Handle input changes for updatable fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedData({ ...updatedData, [name]: value });
+    setUpdatedData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
+  // Toggle expand/collapse for each item
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
-  };
-
-  //image file selection.
-  const handleFileChange = async (e, id) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setFile(file);
-    setFileName(file.name);
-
-    //handling upload to cloudinary.
-    const cloudinaryImageUrl = await uploadToCloudinary(file, type);
-    if (cloudinaryImageUrl) {
-      
-      const newData = { ...updatedData, doctorImage: cloudinaryImageUrl };
-      setUpdatedData(newData); // Update the state with the new image URL
-
-      const isSuccess = await onEdit(type, id, newData);
-
-      if (isSuccess) {
-        setFile(null);
-        setFileName("");
-      }
-    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -74,38 +56,8 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   return (
     <div className="space-y-4">
       {data.map((item) => {
-
-        let itemId; let itemImage; let itemName;let itemType;
-
-        switch(type){
-          case 'doctor':
-            itemId = item.doctorId;
-            itemImage = item.doctorImage;
-            itemType = item.specializationInHospital;
-            itemName =item.doctorName;
-            break;
-          case 'treatment':
-            itemId = item.treatmentId;
-            itemImage = item.treatmentImage;
-            itemType = item.treatmentType;
-            itemName =item.treatmentName
-            break;
-          case 'service':
-            itemId = item.serviceId;
-            itemImage = item.serviceImage;
-            itemType = item.serviceType;
-            itemName =item.serviceName;
-            break;
-        }
-        // const itemId = item.doctorId || item.treatmentId || item.serviceId;
-        // const itemImage =
-        //   item.doctorImage || item.treatmentImage || item.serviceImage;
-        // const itemName =
-        //   item.doctorName || item.treatmentName || item.serviceName;
-        // const itemType =
-        //   item.specializationInHospital ||
-        //   item.treatmentType ||
-        //   item.serviceType;
+        const { nonUpdatable, updatable } = item;
+        const itemId = nonUpdatable.doctor_id || nonUpdatable.id; // Unique ID for the item
 
         return (
           <div
@@ -114,38 +66,12 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
           >
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                {itemImage && (
-                  <div className="relative">
-                    <img
-                      src={itemImage}
-                      alt={itemName}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    {editingId === itemId && (
-                      <button
-                        onClick={() =>
-                          document.getElementById(`fileInput-${itemId}`).click()
-                        }
-                        className="absolute bottom-0 right-0 p-1 bg-amber-500 text-white rounded-full hover:bg-amber-600"
-                      >
-                        ✎
-                      </button>
-                    )}
-                    <input
-                      id={`fileInput-${itemId}`}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleFileChange(e, itemId)}
-                    />
-                  </div>
-                )}
                 <div>
                   <h3 className="text-lg font-semibold dark:text-white">
-                    {itemName}
+                    {nonUpdatable.doctor_name || nonUpdatable.name }
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {itemType}
+                    {updatable.specialization_in_hospital || updatable.type}
                   </p>
                 </div>
               </div>
@@ -159,38 +85,60 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
 
             {expandedId === itemId && (
               <div className="mt-4 space-y-2">
-                {Object.entries(item).map(([key, value]) => {
-                  if (key.endsWith("Id") || key.endsWith("Image")) return null;
+                {/* Display non-updatable fields (excluding doctor_id and doctor_image) */}
+                {Object.entries(nonUpdatable).map(([key, value]) => {
+                  if (key === "doctor_id" || key === "doctor_image") return null; // Skip these fields
                   return (
                     <div
                       key={key}
                       className="flex flex-col sm:flex-row justify-between"
                     >
                       <span className="font-medium text-gray-700 dark:text-gray-300">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}:
+                        {key
+                          .split("_")
+                          .map(
+                            (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
+                        :
                       </span>
-                      {editingId === itemId ? (
-                        <input
-                          type="text"
-                          name={key}
-                          value={updatedData[key]}
-                          onChange={handleInputChange}
-                          className="w-full sm:w-1/2 p-1 border rounded dark:bg-gray-700 dark:text-white"
-                        />
-                      ) : (
-                        <span className="text-gray-600 dark:text-gray-400 break-words">
-                          {value}
-                        </span>
-                      )}
+                      <span className="text-gray-600 dark:text-gray-400 break-words">
+                        {value || "N/A"}
+                      </span>
                     </div>
                   );
                 })}
 
-                {editingId === itemId && file && (
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Selected file: {fileName}
+                {/* Display and edit updatable fields */}
+                {Object.entries(updatable).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex flex-col sm:flex-row justify-between"
+                  >
+                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                      {key
+                        .split("_")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                      :
+                    </span>
+                    {editingId === itemId ? (
+                      <input
+                        type="text"
+                        name={key}
+                        value={updatedData[key] || ""}
+                        onChange={handleInputChange}
+                        className="w-full sm:w-1/2 p-1 border rounded dark:bg-gray-700 dark:text-white"
+                      />
+                    ) : (
+                      <span className="text-gray-600 dark:text-gray-400 break-words">
+                        {value || "N/A"}
+                      </span>
+                    )}
                   </div>
-                )}
+                ))}
 
                 <div className="flex space-x-2 mt-4">
                   {editingId === itemId ? (
@@ -210,7 +158,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
                     </>
                   ) : (
                     <button
-                      onClick={() => handleEditClick(itemId, item)}
+                      onClick={() => handleEditClick(itemId, updatable)}
                       className="px-2 py-1 bg-amber-500 text-white rounded hover:bg-amber-600"
                     >
                       Edit
