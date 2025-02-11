@@ -336,10 +336,10 @@ class EditHospitalManagement(APIView):
         update_data = request.data.get('update_data', {})
 
         # Validation: Prevent negative appointment fees and cost
-        if 'appointment_fees_in_hospital' in update_data and update_data['appointment_fees_in_hospital'] < 0:
+        if 'appointment_fees_in_hospital' in update_data and float(update_data['appointment_fees_in_hospital']) < 0.00:
             return Response({"error": "Appointment fee cannot be negative"}, status=400)
 
-        if 'cost' in update_data and update_data['cost'] < 0:
+        if 'cost' in update_data and float(update_data['cost']) < 0.00:
             return Response({"error": "Cost cannot be negative"}, status=400)
 
         hospital = get_object_or_404(Hospital, user=user)
