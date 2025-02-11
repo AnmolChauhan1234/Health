@@ -36,21 +36,27 @@ class ShowDoctorInHospitalView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        doctors = HospitalDoctor.objects.all()
+        user = request.user
+        hospital = get_object_or_404(Hospital, user=user)
+        doctors = HospitalDoctor.objects.filter(hospital=hospital)
 
         results = [
             {
-                "doctorId": doctor.doctor.id,
-                "doctorName": doctor.doctor.doctor_name,
-                "doctorImage": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
-                "education": doctor.doctor.education,
-                "experience": doctor.doctor.experience,
-                "availability": doctor.doctor.availability,
-                "appointmentFeesInHospital": doctor.appointment_fees_in_hospital,
-                "specializationInHospital": doctor.specialization_in_hospital,
-                "consultationDays": doctor.consultation_days,
-                "addedOn": doctor.added_on,
+                "updatable": {
+                    "doctor_id": doctor.doctor.id,
+                    "doctor_name": doctor.doctor.doctor_name,
+                    "doctor_image": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
+                    "education": doctor.doctor.education,
+                    "experience": doctor.doctor.experience,
+                    "availability": doctor.doctor.availability,
+                    "added_on": doctor.added_on,
+                },
+                "nonUpdatable": {
+                    "appointment_fees_in_hospital": doctor.appointment_fees_in_hospital,
+                    "specialization_in_hospital": doctor.specialization_in_hospital,
+                    "consultation_days": doctor.consultation_days,
+                    "availability_in_hospital": doctor.availability_in_hospital,
+                } 
             }
             for doctor in doctors  # Iterate correctly
         ]
@@ -327,7 +333,7 @@ class EditHospitalManagement(APIView):
         hospital = get_object_or_404(Hospital, user=user)
 
         # Handling Doctors
-        if facility_type == 'Doctor':
+        if facility_type == 'doctor':
             doctor = get_object_or_404(Doctor, id=facility_type_id)
             hospital_doctor = get_object_or_404(HospitalDoctor, hospital=hospital, doctor=doctor)
 
@@ -338,7 +344,7 @@ class EditHospitalManagement(APIView):
             return Response({"message": "Doctor details updated successfully"}, status=200)
 
         # Handling Services
-        elif facility_type == 'Service':
+        elif facility_type == 'service':
             service = get_object_or_404(HospitalService, id=facility_type_id, hospital=hospital)
 
             for field, value in update_data.items():
@@ -348,7 +354,7 @@ class EditHospitalManagement(APIView):
             return Response({"message": "Service details updated successfully"}, status=200)
 
         # Handling Treatments
-        elif facility_type == 'Treatment':
+        elif facility_type == 'treatment':
             treatment = get_object_or_404(HospitalTreatment, id=facility_type_id, hospital=hospital)
 
             for field, value in update_data.items():
