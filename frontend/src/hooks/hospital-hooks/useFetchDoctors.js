@@ -1,35 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../apiInstance";
 
 function useFetchDoctors() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  //states for saving data.
+  const [doctorsData, setDoctorsData] = useState([]);
+  const [doctorsLoading, setDoctorsLoading] = useState(true);
+  const [doctorsError, setDoctorsError] = useState(null);
+  
+
+  //function for fetchData
+  const fetchDoctors = useCallback( 
+    async () => {
+      setDoctorsLoading(true);
+      setDoctorsError(null);
+
+      //api calling
       try {
         const response = await api.get("/hospital-management/show-doctors-in-hospital/");
 
-        //setting the response to data.
-        setData(response.data.doctorDetails);
-
-        //tests.
-        // console.log(response.data.doctorDetails);
-        // const safeData = Array.isArray(data) ? data : [];
-        // setData(safeData);
-        // console.log(safeData)
-        
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
+        if(response.status >= 200){
+          
+          //setting the data.
+          setDoctorsData(response.data.doctorDetails);
+          setDoctorsError(null);
+          console.log(response.data.doctorDetails)
+        } else {
+          setDoctorsError("response did not receive.");
+        }
+      } catch (error) {
+        setDoctorsError(error || 'Server Error.');
+      } finally{
+        setDoctorsLoading(false);
       }
-    };
-    fetchData();
-  }, []);
+    } ,[]
+  )
 
-  return { data, loading, error, refetch: () => setLoading(true) };
+  //useEffect to propagate the changes if refetch is required.
+  useEffect(() => {
+    fetchDoctors();
+  } , [fetchDoctors])
+
+
+  return {doctorsData , doctorsLoading , doctorsError , refetchDoctors: fetchDoctors};
+
 }
 
 export default useFetchDoctors;

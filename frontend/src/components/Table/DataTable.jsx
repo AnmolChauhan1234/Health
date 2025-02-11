@@ -13,11 +13,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   // console.log(data);
 
   //using cloudinary to upload the image.
-  const {
-    uploadToCloudinary,
-    uploading,
-    error: uploadError,
-  } = useCloudinaryUpload();
+  const {uploadToCloudinary, uploading, error: uploadError,} = useCloudinaryUpload();
 
   //handle edit functionality
   const handleEditClick = (id, currentData) => {
@@ -34,6 +30,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   };
 
   const handleSaveClick = (id) => {
+    console.log(type);
     onEdit(type, id, updatedData);
     setEditingId(null);
   };
@@ -62,7 +59,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
       const newData = { ...updatedData, doctorImage: cloudinaryImageUrl };
       setUpdatedData(newData); // Update the state with the new image URL
 
-      const isSuccess = await onEdit(type, id, { doctorImage: cloudinaryImageUrl });
+      const isSuccess = await onEdit(type, id, newData);
 
       if (isSuccess) {
         setFile(null);
@@ -72,7 +69,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="space-y-4">

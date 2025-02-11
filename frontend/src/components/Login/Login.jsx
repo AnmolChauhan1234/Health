@@ -10,7 +10,7 @@ function Login() {
   //useNavigation
   const navigate = useNavigate();
 
-  const {setUser , setUserRole} = useUserContext();
+  const {setUser ,userRole, setUserRole} = useUserContext();
   const [isLoading , setIsLoading] = useState(false);
 
   //modal settings.
@@ -59,6 +59,8 @@ function Login() {
 
         //saving the role.
         setUserRole(role);
+        // console.log(userRole);
+        // sessionStorage.setItem('role', JSON.stringify(role));
 
         //saving the token in session storage.
         sessionStorage.setItem('token' , access_token);

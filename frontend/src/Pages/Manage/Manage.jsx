@@ -5,13 +5,15 @@ import {useFetchDoctors , useFetchServices ,  useFetchTreatements , useUpdateDoc
 import useAuthRedirect from '../../hooks/authRedirect'
 import { DataTable,Modal } from "../../components";
 
-function ManageHospital() {
+function Manage() {
 
   // to authencticate the page.
   useAuthRedirect();
 
   // State for active tab
-  const [activeTab, setActiveTab] = useState("doctors");
+  const [activeTab, setActiveTab] = useState( ()=> {
+    return localStorage.getItem('activeTab') || 'doctor';
+  });
 
   // State for search bar visibility
   const [showSearchBar, setShowSearchBar] = useState(false);
@@ -22,14 +24,16 @@ function ManageHospital() {
   const [statusCode, setStatusCode] = useState("");
 
   // Fetch data hooks
-  const { data: doctors, loading: doctorsLoading, error: doctorsError, refetch: refetchDoctors } = useFetchDoctors();
-  const { data: services, loading: servicesLoading, error: servicesError, refetch: refetchServices } = useFetchServices();
-  const { data: treatments, loading: treatmentsLoading, error: treatmentsError, refetch: refetchTreatments } = useFetchTreatements();
+  const {doctorsData , doctorsLoading , doctorsError , refetchDoctors } = useFetchDoctors();
+  const { serviceData , serviceLoading , serviceError , refetchServices} = useFetchServices();
+  const {treatmentData, treatmentLoading, treatmentError, refetchTreatments} = useFetchTreatements();
+
+  // console.log("Manage.jsx top" , doctorsData);
 
   // Update data hooks
-  const { updateDoctor } = useUpdateDoctor();
-  const { updateService } = useUpdateService();
-  const { updateTreatment } = useUpdateTreatment();
+  // const { updateDoctor } = useUpdateDoctor();
+  // const { updateService } = useUpdateService();
+  // const { updateTreatment } = useUpdateTreatment();
 
   //Update Doctor , services and treatment;
   const {addFacility} = useAddFacility();
@@ -40,6 +44,7 @@ function ManageHospital() {
   // Handle tab change
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    localStorage.setItem('activeTab', tab);
   };
 
   // Handle search bar toggle
@@ -50,37 +55,37 @@ function ManageHospital() {
   // Handle edit functionality for the facilities
   const handleEdit = async (type, id, updatedData) => {
 
-    let isSuccess = false;
+    // let isSuccess = false;
+    const isSuccess = await editFacility(type , id , updatedData);
 
-    // try {
-      isSuccess = await editFacility(type , id , updatedData);
+    console.log("inside handle edit of manage.jsx",type);
 
-      if (isSuccess)
-      {
-        switch(type){
-          case 'doctor':
-            refetchDoctors();
-            break;
-          case "service":
-            refetchServices();
-            break;
-          case "treatment":
-            refetchTreatments();
-            break;
-          default:
-            break;
-        }
+    if (isSuccess)
+    {
+      switch(type){
+        case 'doctor':
+          refetchDoctors();
+          break;
+        case "service":
+          refetchServices();
+          break;
+        case "treatment":
+          refetchTreatments();
+          break;
+        default:
+          break;
       }
+    }
 
-      if (isSuccess) {
-        setIsModalOpen(true);
-        setModalMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`);
-        setStatusCode("success");
-      } else {
-        setIsModalOpen(true);
-        setModalMessage(`Failed to update ${type}.`);
-        setStatusCode("error");
-      }
+    if (isSuccess) {
+      setIsModalOpen(true);
+      setModalMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`);
+      setStatusCode("success");
+    } else {
+      setIsModalOpen(true);
+      setModalMessage(`Failed to update ${type}.`);
+      setStatusCode("error");
+    }
       
       // } refetchDoctors();
     //   if(isSuccess){
@@ -134,33 +139,34 @@ function ManageHospital() {
 
   // Render data based on active tab to display it on screen.
   const renderData = () => {
+    
     switch (activeTab) {
-      case "doctors":
+      case "doctor":
         return (
           <DataTable
-            data={doctors}
+            data={doctorsData}
             loading={doctorsLoading}
             error={doctorsError}
             type="doctor"
             onEdit={handleEdit}
           />
         );
-      case "services":
+      case "service":
         return (
           <DataTable
-            data={services}
-            loading={servicesLoading}
-            error={servicesError}
+            data={serviceData}
+            loading={serviceLoading}
+            error={serviceError}
             type="service"
             onEdit={handleEdit}
           />
         );
-      case "treatments":
+      case "treatment":
         return (
           <DataTable
-            data={treatments}
-            loading={treatmentsLoading}
-            error={treatmentsError}
+            data={treatmentData}
+            loading={treatmentLoading}
+            error={treatmentError}
             type="treatment"
             onEdit={handleEdit}
           />
@@ -177,20 +183,20 @@ function ManageHospital() {
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-4">
           <button
-            onClick={() => handleTabChange("doctors")}
-            className={`px-4 py-2 rounded ${activeTab === "doctors" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
+            onClick={() => handleTabChange("doctor")}
+            className={`px-4 py-2 rounded ${activeTab === "doctor" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
           >
             Doctors
           </button>
           <button
-            onClick={() => handleTabChange("services")}
-            className={`px-4 py-2 rounded ${activeTab === "services" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
+            onClick={() => handleTabChange("service")}
+            className={`px-4 py-2 rounded ${activeTab === "service" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
           >
             Services
           </button>
           <button
-            onClick={() => handleTabChange("treatments")}
-            className={`px-4 py-2 rounded ${activeTab === "treatments" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
+            onClick={() => handleTabChange("treatment")}
+            className={`px-4 py-2 rounded ${activeTab === "treatment" ? "bg-amber-500 text-white" : "bg-white text-gray-700"}`}
           >
             Treatments
           </button>
@@ -226,4 +232,4 @@ function ManageHospital() {
   );
 }
 
-export default ManageHospital;
+export default Manage;

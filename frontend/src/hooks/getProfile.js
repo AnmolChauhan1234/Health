@@ -27,7 +27,7 @@ const useGetProfile = () => {
         setProfileData(response.data);
         
       } else {
-        setError("Error gettign the data.")
+        setError("Error getting the data.")
       }
     } catch (error) {
       setError(error || "An error occured" )
