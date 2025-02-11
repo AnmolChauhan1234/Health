@@ -57,7 +57,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
     <div className="space-y-4">
       {data.map((item) => {
         const { nonUpdatable, updatable } = item;
-        const itemId = nonUpdatable.doctor_id || nonUpdatable.id; // Unique ID for the item
+        const itemId = nonUpdatable.doctor_id; // Unique ID for the item
 
         return (
           <div
@@ -68,10 +68,10 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
               <div className="flex items-center space-x-4">
                 <div>
                   <h3 className="text-lg font-semibold dark:text-white">
-                    {nonUpdatable.doctor_name || nonUpdatable.name }
+                    {nonUpdatable.doctor_name}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {updatable.specialization_in_hospital || updatable.type}
+                    {nonUpdatable.specialization_in_hospital}
                   </p>
                 </div>
               </div>
