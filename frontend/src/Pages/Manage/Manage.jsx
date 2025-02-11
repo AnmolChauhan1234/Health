@@ -1,26 +1,17 @@
 import React, { useState } from "react";
-import {
-  useFetchDoctors,
-  useFetchServices,
-  useFetchTreatements,
-  useUpdateDoctor,
-  useUpdateService,
-  useUpdateTreatment,
-  useEditFacility,
-  useAddFacility,
-} from "../../hooks/hospital-hooks/export";
+import {useFetchDoctors , useFetchServices ,  useFetchTreatements , useUpdateDoctor , useUpdateService , useUpdateTreatment, useEditFacility, useAddFacility} from '../../hooks/hospital-hooks/export'
 
-// import Modal from '../../components/Modal/Modal'
-import useAuthRedirect from "../../hooks/authRedirect";
-import { DataTable, Modal } from "../../components";
+import useAuthRedirect from '../../hooks/authRedirect'
+import { DataTable,Modal,AddSearchBox } from "../../components";
 
 function Manage() {
+
   // to authencticate the page.
   useAuthRedirect();
 
   // State for active tab
-  const [activeTab, setActiveTab] = useState(() => {
-    return localStorage.getItem("activeTab") || "doctor";
+  const [activeTab, setActiveTab] = useState( ()=> {
+    return localStorage.getItem('activeTab') || 'doctor';
   });
 
   // State for search bar visibility
@@ -32,12 +23,9 @@ function Manage() {
   const [statusCode, setStatusCode] = useState("");
 
   // Fetch data hooks
-  const { doctorsData, doctorsLoading, doctorsError, refetchDoctors } =
-    useFetchDoctors();
-  const { serviceData, serviceLoading, serviceError, refetchServices } =
-    useFetchServices();
-  const { treatmentData, treatmentLoading, treatmentError, refetchTreatments } =
-    useFetchTreatements();
+  const {doctorsData , doctorsLoading , doctorsError , refetchDoctors } = useFetchDoctors();
+  const { serviceData , serviceLoading , serviceError , refetchServices} = useFetchServices();
+  const {treatmentData, treatmentLoading, treatmentError, refetchTreatments} = useFetchTreatements();
 
   // console.log("Manage.jsx top" , doctorsData);
 
@@ -47,15 +35,15 @@ function Manage() {
   // const { updateTreatment } = useUpdateTreatment();
 
   //Update Doctor , services and treatment;
-  const { addFacility } = useAddFacility();
+  const {addFacility} = useAddFacility();
 
   //Edit Doctor or services and treatment.
-  const { editFacility } = useEditFacility();
+  const {editFacility} = useEditFacility();
 
   // Handle tab change
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    localStorage.setItem("activeTab", tab);
+    localStorage.setItem('activeTab', tab);
   };
 
   // Handle search bar toggle
@@ -65,14 +53,16 @@ function Manage() {
 
   // Handle edit functionality for the facilities
   const handleEdit = async (type, id, updatedData) => {
+
     // let isSuccess = false;
-    const isSuccess = await editFacility(type, id, updatedData);
+    const isSuccess = await editFacility(type , id , updatedData);
 
     // console.log("inside handle edit of manage.jsx",type);
 
-    if (isSuccess) {
-      switch (type) {
-        case "doctor":
+    if (isSuccess)
+    {
+      switch(type){
+        case 'doctor':
           refetchDoctors();
           break;
         case "service":
@@ -88,17 +78,15 @@ function Manage() {
 
     if (isSuccess) {
       setIsModalOpen(true);
-      setModalMessage(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`
-      );
+      setModalMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`);
       setStatusCode("success");
     } else {
       setIsModalOpen(true);
       setModalMessage(`Failed to update ${type}.`);
       setStatusCode("error");
     }
-
-    // } refetchDoctors();
+      
+      // } refetchDoctors();
     //   if(isSuccess){
     //     setIsModalOpen(true);
     //     setModalMessage("Doctor updated successfully");
@@ -130,13 +118,16 @@ function Manage() {
     //   default:
     //     break;
     // }
+
+    
   };
 
   //Handle add facility functionality.
   // const handleAddFacility = async ( id) => {
-
+    
   //   //To check the success status.
   //   let isSuccess;
+
 
   // }
 
@@ -147,6 +138,7 @@ function Manage() {
 
   // Render data based on active tab to display it on screen.
   const renderData = () => {
+
     switch (activeTab) {
       case "doctor":
         return (
@@ -189,14 +181,12 @@ function Manage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
         {/* Tabs */}
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-          {["doctor", "service", "treatment"].map((tab) => (
+          {['doctor', 'service', 'treatment'].map((tab) => (
             <button
               key={tab}
               onClick={() => handleTabChange(tab)}
               className={`px-4 py-2 rounded w-full sm:w-auto text-center ${
-                activeTab === tab
-                  ? "bg-amber-500 text-white"
-                  : "bg-white text-gray-700"
+                activeTab === tab ? "bg-amber-500 text-white" : "bg-white text-gray-700"
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}s
@@ -213,27 +203,26 @@ function Manage() {
         </button>
       </div>
 
-      {/* Search Bar */}
+      {/* Search Bar section starts her*/}
       {showSearchBar && (
         <div className="mb-6">
-          <input
+          <AddSearchBox type={activeTab} />
+          {/* <input
             type="text"
             placeholder={`Search ${activeTab}...`}
             className="w-full p-2 rounded border border-gray-300"
-          />
+          /> */}
         </div>
       )}
-
+      {/* Search Bar section ends here */}
+      
       {/* Data Display */}
-      <div className="bg-white p-6 rounded shadow">{renderData()}</div>
+      <div className="bg-white p-6 rounded shadow">
+        {renderData()}
+      </div>
 
       {/* Modal for Messages */}
-      <Modal
-        isOpen={isModalOpen}
-        closeModal={closeModal}
-        statusCode={statusCode}
-        message={modalMessage}
-      />
+      <Modal isOpen={isModalOpen} closeModal={closeModal} statusCode={statusCode} message={modalMessage} />
     </div>
   );
 }

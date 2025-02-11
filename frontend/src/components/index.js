@@ -18,4 +18,6 @@ import PatientBill from "./Bill/PatientBill/PatientBill";
 import Modal from "./Modal/Modal";
 import DataTable from './Table/DataTable'
 
-export {Header , Footer , ContentWrite , Map , Login , Signup , ThreeDModel,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable};
+import AddSearchBox from "./AddSearchBox/AddSearchBox";
+
+export {Header , Footer , ContentWrite , Map , Login , Signup , ThreeDModel,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable , AddSearchBox };
