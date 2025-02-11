@@ -419,7 +419,7 @@ class SearchServiceView(APIView):
             return Response({})
         
         services = Service.objects.filter(name__icontains=query)
-        results = [{"serviceId": service.id, "serviceName": service.name} for service in services]
+        results = [{"id": service.id, "name": service.name} for service in services]
 
         return Response({"services": results})
     
@@ -435,6 +435,6 @@ class SearchTreatmentAPIView(APIView):
             return Response({})
         
         treatments = Treatment.objects.filter(name__icontains=query)
-        results = [{"treatmentId": treatment.id, "treatmentName": treatment.name} for treatment in treatments]
+        results = [{"id": treatment.id, "name": treatment.name} for treatment in treatments]
 
         return Response({"treatments": results})
