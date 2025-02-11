@@ -51,7 +51,7 @@ class ShowDoctorInHospitalView(APIView):
                     "availability": doctor.doctor.availability,
                     "added_on": doctor.added_on,
                 },
-                "nonUpdatable": {
+                "updatable": {
                     "appointment_fees_in_hospital": doctor.appointment_fees_in_hospital,
                     "specialization_in_hospital": doctor.specialization_in_hospital,
                     "consultation_days": doctor.consultation_days,
