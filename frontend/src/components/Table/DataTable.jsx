@@ -21,15 +21,14 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   const handleSaveClick = (id) => {
     // Prepare the data to be sent for editing
     // const dataToSend = {
-    //   nonUpdatable: data.find((item) => item.nonUpdatable.doctor_id === id)
-    //     .nonUpdatable,
-    //   updatable: updatedData, // Send only the updated updatable fields
+    //   id, // Include the ID of the item being edited
+    //   ...updatedData, // Send only the updated updatable fields
     // };
 
-    // console.log("handle save click", dataToSend);
+    // console.log("handle save click", updatedData);
 
     // Call the onEdit function with the correct structure
-    onEdit(type, id, updatedData);
+    onEdit( type, id , updatedData);
 
     // Reset editing state
     setEditingId(null);
@@ -51,13 +50,13 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="space-y-4">
       {data.map((item) => {
         const { nonUpdatable, updatable } = item;
-        const itemId = nonUpdatable.doctor_id; // Unique ID for the item
+        const itemId = nonUpdatable.id; // Unique ID for the item
 
         return (
           <div
@@ -66,12 +65,20 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
           >
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
+                {/* Display doctor image if available */}
+                {nonUpdatable.doctor_image && (
+                  <img
+                    src={nonUpdatable.doctor_image}
+                    alt={nonUpdatable.doctor_name || "Image"}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                )}
                 <div>
                   <h3 className="text-lg font-semibold dark:text-white">
-                    {nonUpdatable.doctor_name}
+                    {nonUpdatable.doctor_name || nonUpdatable.name || "N/A"}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {nonUpdatable.specialization_in_hospital}
+                    {updatable.specialization_in_hospital || "N/A"}
                   </p>
                 </div>
               </div>
@@ -85,9 +92,9 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
 
             {expandedId === itemId && (
               <div className="mt-4 space-y-2">
-                {/* Display non-updatable fields (excluding doctor_id and doctor_image) */}
+                {/* Display non-updatable fields (excluding id and doctor_image) */}
                 {Object.entries(nonUpdatable).map(([key, value]) => {
-                  if (key === "doctor_id" || key === "doctor_image") return null; // Skip these fields
+                  if (key === "id" || key === "doctor_image") return null; // Skip these fields
                   return (
                     <div
                       key={key}

@@ -24,7 +24,7 @@ function useFetchDoctors() {
           //setting the data.
           setDoctorsData(response.data.doctorDetails);
           setDoctorsError(null);
-          console.log(response.data.doctorDetails)
+          // console.log(response.data.doctorDetails)
         } else {
           setDoctorsError("response did not receive.");
         }
