@@ -36,21 +36,27 @@ class ShowDoctorInHospitalView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        doctors = HospitalDoctor.objects.all()
+        user = request.user
+        hospital = get_object_or_404(Hospital, user=user)
+        doctors = HospitalDoctor.objects.filter(hospital=hospital)
 
         results = [
             {
-                "doctorId": doctor.doctor.id,
-                "doctorName": doctor.doctor.doctor_name,
-                "doctorImage": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
-                "education": doctor.doctor.education,
-                "experience": doctor.doctor.experience,
-                "availability": doctor.doctor.availability,
-                "appointmentFeesInHospital": doctor.appointment_fees_in_hospital,
-                "specializationInHospital": doctor.specialization_in_hospital,
-                "consultationDays": doctor.consultation_days,
-                "addedOn": doctor.added_on,
+                "updatable": {
+                    "doctor_id": doctor.doctor.id,
+                    "doctor_name": doctor.doctor.doctor_name,
+                    "doctor_image": doctor.doctor.doctor_image if doctor.doctor.doctor_image else None,
+                    "education": doctor.doctor.education,
+                    "experience": doctor.doctor.experience,
+                    "availability": doctor.doctor.availability,
+                    "added_on": doctor.added_on,
+                },
+                "nonUpdatable": {
+                    "appointment_fees_in_hospital": doctor.appointment_fees_in_hospital,
+                    "specialization_in_hospital": doctor.specialization_in_hospital,
+                    "consultation_days": doctor.consultation_days,
+                    "availability_in_hospital": doctor.availability_in_hospital,
+                } 
             }
             for doctor in doctors  # Iterate correctly
         ]

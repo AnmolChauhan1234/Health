@@ -31,6 +31,7 @@ class HospitalDoctor(models.Model):
         max_length=255, 
         default="Monday to Friday"  # Default consultation days
     )
+    availability_in_hospital = models.BooleanField(default=True)  # Whether the doctor is available
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
