@@ -14,8 +14,8 @@ function getLocationResult() {
 
     try {
 
-      const response =await api.get(`/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}`);
-      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
+      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}`);
+      const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
 
       if(response.status === 200){
         console.log(response.data)

@@ -1,9 +1,9 @@
 // AppRouter.jsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import { useUserContext } from './context/UserContext/UserContextProvider';
 import Layout from './Layout';
-import { Home, About, Profile, Register, Contact, MyAccount, History, Bills, Manage } from './Pages/export';
+import { Home, About, Profile, Register, Contact, MyAccount, History, Bills, Manage, DetailsView } from './Pages/export';
 
 function AppRouter() {
   
@@ -17,6 +17,7 @@ function AppRouter() {
           <Route index element={<Home />} />
           <Route path='about' element={<About />} />
           <Route path='contact' element={<Contact />} />
+          <Route path='details' element={<DetailsView />} />
         </Route>
 
         {/* Authentication Routes */}
