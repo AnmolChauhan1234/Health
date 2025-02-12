@@ -22,4 +22,5 @@ urlpatterns = [
     path('accounts/',include('accounts.urls')),
     path('profiles/',include('profiles.urls')),
     path('hospital-management/',include('hospital_management.urls')),
+    path('search-api/',include('search_api.urls')),
 ]

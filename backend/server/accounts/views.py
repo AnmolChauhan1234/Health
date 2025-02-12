@@ -116,7 +116,7 @@ class CustomTokenRefreshView(TokenRefreshView):
 
         try:
             decoded_refresh = RefreshToken(refresh_token)
-            id = decoded_refresh['user_id']  
+            id = decoded_refresh['user_id']
 
             user = User.objects.get(id=id)
 
