@@ -169,7 +169,7 @@ function Manage() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900">
       {/* Top Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
         {/* Tabs */}
@@ -210,7 +210,7 @@ function Manage() {
       {/* Search Bar section ends here */}
       
       {/* Data Display */}
-      <div className="bg-white p-6 rounded shadow">
+      <div className="bg-white p-6 rounded shadow dark:bg-gray-900">
         {renderData()}
       </div>
 

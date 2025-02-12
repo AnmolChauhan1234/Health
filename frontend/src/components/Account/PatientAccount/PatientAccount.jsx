@@ -181,7 +181,7 @@ function PatientAccount() {
 
       <Modal isOpen={isOpen} closeModal={closeModal} statusCode={statusCode} message={modalMessage} />
 
-      <main className="w-full max-w-2xl mx-auto my-8 p-6 rounded-lg border shadow-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+      <main className="w-full max-w-2xl mx-auto rounded-lg border shadow-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white">
 
         {/* Profile Picture Section */}
         <section className="flex flex-col items-center space-y-4">
@@ -237,9 +237,11 @@ function PatientAccount() {
 
           {Object.keys(formData).map((key) => (
             <div key={key} className="space-y-1">
-              <label className="block text-base font-medium text-gray-700">
+
+              <label className="block text-base font-medium text-gray-700 dark:text-gray-200">
                 {key.charAt(0).toUpperCase() + key.slice(1)}:
               </label>
+
               <input
                 type="text"
                 name={key}
@@ -248,6 +250,7 @@ function PatientAccount() {
                 disabled={!isEditing}
                 className="w-full p-2 rounded outline outline-amber-600 dark:bg-gray-500 dark:text-white"
               />
+              
             </div>
           ))}
 
