@@ -8,7 +8,6 @@ function useFetchDoctors() {
   const [doctorsLoading, setDoctorsLoading] = useState(true);
   const [doctorsError, setDoctorsError] = useState(null);
   
-
   //function for fetchData
   const fetchDoctors = useCallback( 
     async () => {
@@ -19,12 +18,13 @@ function useFetchDoctors() {
       try {
         const response = await api.get("/hospital-management/show-doctors-in-hospital/");
 
-        if(response.status >= 200){
+        if(response.status >= 200 <= 300 ) {
           
           //setting the data.
           setDoctorsData(response.data.doctorDetails);
           setDoctorsError(null);
           // console.log(response.data.doctorDetails)
+
         } else {
           setDoctorsError("response did not receive.");
         }

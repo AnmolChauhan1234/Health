@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {useFetchDoctors , useFetchServices ,  useFetchTreatements , useUpdateDoctor , useUpdateService , useUpdateTreatment, useEditFacility, useAddFacility} from '../../hooks/hospital-hooks/export'
+import {useFetchDoctors , useFetchServices ,  useFetchTreatements , useEditFacility, useDeleteFacility} from '../../hooks/hospital-hooks/export'
 
 import useAuthRedirect from '../../hooks/authRedirect'
 import { DataTable,Modal,AddSearchBox } from "../../components";
@@ -27,18 +27,11 @@ function Manage() {
   const { serviceData , serviceLoading , serviceError , refetchServices} = useFetchServices();
   const {treatmentData, treatmentLoading, treatmentError, refetchTreatments} = useFetchTreatements();
 
-  // console.log("Manage.jsx top" , doctorsData);
-
-  // Update data hooks
-  // const { updateDoctor } = useUpdateDoctor();
-  // const { updateService } = useUpdateService();
-  // const { updateTreatment } = useUpdateTreatment();
-
-  //Update Doctor , services and treatment;
-  const {addFacility} = useAddFacility();
-
   //Edit Doctor or services and treatment.
   const {editFacility} = useEditFacility();
+
+  //Delete Facility here.
+  const {deleteFacility , deleteError , successMsg} = useDeleteFacility();
 
   // Handle tab change
   const handleTabChange = (tab) => {
@@ -59,10 +52,10 @@ function Manage() {
 
     // console.log("inside handle edit of manage.jsx",type);
 
-    if (isSuccess)
-    {
+    if(isSuccess){
+
       switch(type){
-        case 'doctor':
+        case "doctor":
           refetchDoctors();
           break;
         case "service":
@@ -74,6 +67,7 @@ function Manage() {
         default:
           break;
       }
+
     }
 
     if (isSuccess) {
@@ -86,50 +80,41 @@ function Manage() {
       setStatusCode("error");
     }
       
-      // } refetchDoctors();
-    //   if(isSuccess){
-    //     setIsModalOpen(true);
-    //     setModalMessage("Doctor updated successfully");
-    //     setStatusCode("success");
-    //   } else {
-    //     setIsModalOpen(true)
-    //     setModalMessage(`Could not add ${type}`);
-    //     setStatusCode("warning");
-    //   }
-    // } catch (error) {
-    //   setIsModalOpen(true);
-    //   setModalMessage("Server Error");
-    //   setStatusCode("error");
-    // }
-
-    // switch (type) {
-    //   case "doctor":
-    //     isSuccess = await updateDoctor(id, updatedData);
-    //     if (isSuccess) refetchDoctors();
-    //     break;
-    //   case "service":
-    //     isSuccess = await updateService(id, updatedData);
-    //     if (isSuccess) refetchServices();
-    //     break;
-    //   case "treatment":
-    //     isSuccess = await updateTreatment(id, updatedData);
-    //     if (isSuccess) refetchTreatments();
-    //     break;
-    //   default:
-    //     break;
-    // }
-
     
   };
 
-  //Handle add facility functionality.
-  // const handleAddFacility = async ( id) => {
-    
-  //   //To check the success status.
-  //   let isSuccess;
+  //Handle Delete functionality for the facilities.
+  const handleDelete = async (type , id) => {
+    const isSuccess = await deleteFacility(type , id);
 
+    if(isSuccess){
 
-  // }
+      switch(type){
+        case "doctor":
+          refetchDoctors();
+          break;
+        case "service":
+          refetchServices();
+          break;
+        case "treatment":
+          refetchTreatments();
+          break;
+        default:
+          break;
+      }
+
+    }
+
+    if(isSuccess){
+      setIsModalOpen(true);
+      setModalMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`);
+      setStatusCode("success");
+    } else{
+      setIsModalOpen(true);
+      setModalMessage(deleteError);
+      setStatusCode("warning");
+    }
+  }
 
   // Close modal
   const closeModal = () => {
@@ -140,6 +125,7 @@ function Manage() {
   const renderData = () => {
 
     switch (activeTab) {
+
       case "doctor":
         return (
           <DataTable
@@ -148,8 +134,10 @@ function Manage() {
             error={doctorsError}
             type="doctor"
             onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         );
+
       case "service":
         return (
           <DataTable
@@ -158,8 +146,10 @@ function Manage() {
             error={serviceError}
             type="service"
             onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         );
+
       case "treatment":
         return (
           <DataTable
@@ -168,11 +158,14 @@ function Manage() {
             error={treatmentError}
             type="treatment"
             onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         );
+
       default:
         return null;
     }
+
   };
 
   return (

@@ -10,7 +10,9 @@ function Login() {
   //useNavigation
   const navigate = useNavigate();
 
-  const {setUser ,userRole, setUserRole} = useUserContext();
+  const {setUser , setUserRole , setProfileData } = useUserContext();
+  
+
   const [isLoading , setIsLoading] = useState(false);
 
   //modal settings.
@@ -69,6 +71,11 @@ function Login() {
 
         //displaying message.
         console.log(message);
+        
+        //getting profile response.
+        // const profile = await api.get("profiles/view-profile/");
+        // setProfileData(profile.data);
+
         // setIsModalOpen(true);
         // setModalMessage(message);
         // setStatusCode("success");

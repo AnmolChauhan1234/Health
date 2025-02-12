@@ -15,12 +15,10 @@ function UserContextProvider({ children }) {
     return storedUserRole ? JSON.parse(storedUserRole) : 'patient';
   });
 
-  // useEffect(() => {
-  //   sessionStorage.setItem('role', JSON.stringify(userRole));
-  // }, [userRole]);
+  const [profileData, setProfileData] = useState(null); // Add profileData state
 
   return (
-    <UserContext.Provider value={{ user, setUser, userRole, setUserRole }}>
+    <UserContext.Provider value={{ user, setUser, userRole, setUserRole , profileData, setProfileData }}>
       {children}
     </UserContext.Provider>
   );

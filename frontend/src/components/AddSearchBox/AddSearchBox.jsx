@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useAddFacility from "../../hooks/hospital-hooks/useAddFacility";
 import api from "../../hooks/apiInstance";
+import{ Modal} from "../index";
 
 function AddSearchBox({ type }) {
 
@@ -8,6 +9,15 @@ function AddSearchBox({ type }) {
   const [searchResults, setSearchResults] = useState([]); // State for search results
   const [selectedItem, setSelectedItem] = useState(null); // State for selected item
   const { addFacility, loading, error } = useAddFacility(); // Use the hook
+
+  //Modal specific states
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [statusCode, setstatusCode] = useState('');
+
+  const closeModal = () => {
+    setIsOpen(false);
+  }
 
   // Fetch search results in real-time
   useEffect(() => {
@@ -25,6 +35,9 @@ function AddSearchBox({ type }) {
           // console.log(response.data) // Update search results
         }
       } catch (error) {
+        setIsOpen(true);
+        setMessage("Error fetching results.");
+        setstatusCode("error");
         console.error("Error fetching search results:", error);
       }
     };
@@ -39,20 +52,35 @@ function AddSearchBox({ type }) {
 
   // Handle adding the selected item
   const handleAddItem = async () => {
+
     if (selectedItem) {
+      // console.log( "handle add button" ,selectedItem);
       const success = await addFacility(type, selectedItem.id); // Call the hook
       if (success) {
-        alert(`${type} added successfully!`);
-        setSelectedItem(null); // Clear selection
-        setSearchQuery(""); // Clear search input
+        //displaying message
+        setMessage(`${type} added successfully!`);
+        setstatusCode("success");
+        setIsOpen(true);
+
+        //clearing selection and input.
+        setSelectedItem(null);
+        setSearchQuery("");
+
       } else {
-        alert(`Failed to add ${type}.`);
+
+        //displaying message
+        setMessage(`Failed to add ${type}.`);
+        setstatusCode("warning");
+        setIsOpen(true);
+        // alert(`Failed to add ${type}.`);
       }
     }
   };
 
   return (
     <main>
+      {/* Modal section starts here */}
+      <Modal isOpen={isOpen} message={message} closeModal={closeModal} statusCode={statusCode} />
       {/* Search input section */}
       <input
         type="text"
@@ -98,7 +126,7 @@ function AddSearchBox({ type }) {
       )}
 
       {/* Error message */}
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && <p className="text-red-500 mt-2">{error.message}</p>}
     </main>
   );
 }

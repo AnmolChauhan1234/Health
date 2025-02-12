@@ -44,12 +44,20 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
+        console.log('generating refersh token')
         await refreshToken();
         const newToken = sessionStorage.getItem('token');
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (error) {
         console.error("Token Refresh failed", error);
+
+        //setting to default local and session Storage.
+        localStorage.clear();
+        sessionStorage.clear();
+
+        //redirect.
+        window.location.href("auth/register")
       }
     }
 

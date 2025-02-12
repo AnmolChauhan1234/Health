@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function DataTable({ data = [], loading, error, type, onEdit }) {
+function DataTable({ data = [], loading, error, type, onEdit , onDelete}) {
   const [editingId, setEditingId] = useState(null);
   const [updatedData, setUpdatedData] = useState({});
   const [expandedId, setExpandedId] = useState(null);
@@ -19,13 +19,6 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
 
   // Save button functionality
   const handleSaveClick = (id) => {
-    // Prepare the data to be sent for editing
-    // const dataToSend = {
-    //   id, // Include the ID of the item being edited
-    //   ...updatedData, // Send only the updated updatable fields
-    // };
-
-    // console.log("handle save click", updatedData);
 
     // Call the onEdit function with the correct structure
     onEdit( type, id , updatedData);
@@ -34,6 +27,12 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
     setEditingId(null);
     setUpdatedData({});
   };
+
+  //Delete button.
+  const handleDeleteClick = (id) => {
+    onDelete(type , id);
+    setEditingId(null);
+  }
 
   // Handle input changes for updatable fields
   const handleInputChange = (e) => {
@@ -52,6 +51,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  // UI section here.
   return (
     <div className="space-y-4">
       {data.map((item) => {
@@ -172,7 +172,7 @@ function DataTable({ data = [], loading, error, type, onEdit }) {
                     </button>
                   )}
                   <button
-                    onClick={() => {}}
+                    onClick={() => handleDeleteClick(itemId)}
                     className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                   >
                     Delete

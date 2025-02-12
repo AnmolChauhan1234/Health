@@ -4,7 +4,9 @@ const refreshToken = async () => {
 
   // api call to custom-refresh.
   try {
-    const response = await api.post("/accounts/custom-refresh/");
+    const response = await api.post("/accounts/custom-refresh/" , {} , {
+      withCredentials:true, //Ensuring cookies are sent with the request.
+    });
 
     if(response.status === 200){
       const accessToken = response.data.access;
@@ -15,7 +17,7 @@ const refreshToken = async () => {
     }
 
   } catch (error) {
-    console.error('Failed to generate the token.Login agian.')
+    console.error('Failed to generate the token.Login again.')
   }
 
 };
