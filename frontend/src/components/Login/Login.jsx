@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../../hooks/apiInstance';
 import { useUserContext } from '../../context/UserContext/UserContextProvider';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +35,7 @@ function Login() {
     });
   }
 
+  //function to handle the submit the click on submit to login to dashboard.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -49,16 +50,17 @@ function Login() {
 
       if(response.status === 200){
 
+        //destructure the access_token and message received.
+        const {access_token , message, role} = response.data;
+
         //setting user to true , means user is logged in.
         setUser(true);
         sessionStorage.setItem('user' , true);
 
-        //destructure the access_token and message received.
-        const {access_token , message, role} = response.data;
-        // console.log(role);
-
         //saving the role.
         setUserRole(role);
+        sessionStorage.setItem('role' , JSON.stringify(role));
+
         // console.log(userRole);
         // sessionStorage.setItem('role', JSON.stringify(role));
 
@@ -73,7 +75,8 @@ function Login() {
         // setPath('/dashboard')
 
         //navigate
-        navigate("/dashboard");
+        // navigate("/dashboard");
+        navigate('/')
 
       } else {
         //displaying error message.
@@ -100,7 +103,13 @@ function Login() {
         password: ""
       })
     }
-  }
+  };
+
+  // useEffect( () => {
+  //   if(userRole){
+  //     navigate("/dashboard");
+  //   }
+  // }, [userRole,navigate])
 
   return (
     <>

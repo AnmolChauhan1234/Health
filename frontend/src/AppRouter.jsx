@@ -1,5 +1,5 @@
 // AppRouter.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import { useUserContext } from './context/UserContext/UserContextProvider';
 import Layout from './Layout';
@@ -12,15 +12,18 @@ function AppRouter() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
+
         <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
           <Route path='about' element={<About />} />
           <Route path='contact' element={<Contact />} />
         </Route>
+
         {/* Authentication Routes */}
         <Route path='/auth' element={<Layout />}>
           <Route path='register' element={<Register />} />
         </Route>
+
         {/* Dashboard Routes */}
         <Route path='/dashboard' element={<Layout />}>
           <Route index element={<Profile role={userRole} />} />
@@ -29,6 +32,7 @@ function AppRouter() {
           <Route path='history' element={<History role={userRole} />} />
           <Route path='manage' element={<Manage />} />
         </Route>
+
       </>
     )
   );

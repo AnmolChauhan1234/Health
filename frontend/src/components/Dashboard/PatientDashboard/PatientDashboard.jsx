@@ -63,9 +63,9 @@ function PatientDashboard() {
       <Modal isOpen={isModalOpen} closeModal={closeModal} message={modalMessage} statusCode={statusCode}/>
     
     <section className="space-y-6">
-      <h2 className="text-2xl font-semibold ubuntu-regular italic">
+      {/* <h2 className="text-2xl font-semibold ubuntu-regular italic">
         Patient Dashboard
-      </h2>
+      </h2> */}
 
       {/* Patient-Specific Features starts here */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
