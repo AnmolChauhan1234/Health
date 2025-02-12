@@ -71,7 +71,7 @@ function LocationSection({ onLocationChange, onSearch }) {
         />
         <input
           type="text"
-          className="w-full bg-transparent outline-none text-gray-900 dark:text-white text-sm"
+          className="w-full bg-transparent outline-none text-gray-900 dark:text-white text-sm focus:outline focus:outline-amber-400 ubuntu-regular-italic"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           onFocus={() => setIsDropdownOpen(true)}

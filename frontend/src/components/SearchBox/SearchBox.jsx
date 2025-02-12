@@ -17,7 +17,7 @@ function SearchBox({ onSearch }) {
       <input
         type="text"
         placeholder="Search..."
-        className="border border-gray-400 dark:border-gray-600 p-2 rounded-md w-full sm:w-2/3 text-gray-500 dark:text-gray-200"
+        className="border border-gray-400 dark:border-gray-600 p-2 rounded-md w-full sm:w-2/3 text-gray-500 dark:text-gray-200 shadow-md  focus:outline focus:outline-amber-500 focus:border-none"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
