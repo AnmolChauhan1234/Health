@@ -48,10 +48,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken', 
+    'rest_framework.authtoken',
+    "django.contrib.postgres",
     'accounts',
     'profiles',
-    'hospital_management'
+    'hospital_management',
+    'search_api',
 ]
 
 MIDDLEWARE = [

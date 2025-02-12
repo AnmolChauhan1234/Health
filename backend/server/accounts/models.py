@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
-# from django.contrib.gis.db import models  # Import GIS models
+# from django.contrib.gis.db import models as geomodels  # Import GIS models
 
 # Create your models here.
 
@@ -74,7 +74,13 @@ class Hospital(models.Model):
     established_year = models.PositiveIntegerField(blank=True, null=True)  # Optional
     bed_capacity = models.PositiveIntegerField(default=0, blank=True, null=True)  # Optional
     emergency_services = models.BooleanField(default=False)  # Optional (default is False)
-    # location = models.PointField()  # Geospatial field
+
+
+    latitude = models.FloatField(default=0.0)   # ✅ No GDAL required
+    longitude = models.FloatField(default=0.0)  # ✅ No GDAL required
+    
+    # Geospatial field to store the hospital location (latitude, longitude)
+    # location = geomodels.PointField(blank=True, null=True)  # This stores the geographical point (latitude, longitude)
 
     def __str__(self):
         return self.user.full_name  # Uses full name from User model
