@@ -1,26 +1,27 @@
-import axios from 'axios';
-import refreshToken from './refreshToken';
+import axios from "axios";
+import refreshToken from "./refreshToken";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers:{
+  headers: {
     "Content-Type": "application/json",
+    //Sending cookies along with the request.
+    // withCredentials: true,
   },
   //Sending cookies along with the request.
-  withCredentials: true, 
-})
+  withCredentials: true,
+});
 
 //interceptor for request.
 api.interceptors.request.use(
-
   //handling config i.e the files sent.
   (config) => {
-    const token = sessionStorage.getItem('token');
-    if(token){
+    const token = sessionStorage.getItem("token");
+    if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
-    } 
+    }
     return config;
-  }, 
+  },
 
   //handle errors via Promise.reject(error);
   (error) => {
@@ -30,7 +31,6 @@ api.interceptors.request.use(
 
 //interceptor for response.
 api.interceptors.response.use(
-
   //return successfull response.
   (response) => {
     return response;
@@ -40,30 +40,35 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      error.response.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       try {
-        console.log('generating refersh token')
-        await refreshToken();
-        const newToken = sessionStorage.getItem('token');
-        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-        return api(originalRequest);
+        console.log("Generating refresh token");
+        const success = await refreshToken();
+        if (success) {
+          const newToken = sessionStorage.getItem("token");
+          originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+          return api(originalRequest);
+        } else {
+          throw new Error("Token refresh failed");
+        }
       } catch (error) {
         console.error("Token Refresh failed", error);
 
-        //setting to default local and session Storage.
+        // Clear storage and redirect
         localStorage.clear();
         sessionStorage.clear();
-
-        //redirect.
-        window.location.href("auth/register")
+        window.location.href = "/auth/register";
       }
     }
 
     return Promise.reject(new Error(error));
   }
-
-)
+);
 
 export default api;

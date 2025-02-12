@@ -12,12 +12,15 @@ const refreshToken = async () => {
       const accessToken = response.data.access;
       sessionStorage.setItem('token', accessToken);
       console.log(response.data.message);
+      return true;
     } else{
       console.log("Access token refresh failed", response.data.details);
+      return false;
     }
 
   } catch (error) {
     console.error('Failed to generate the token.Login again.')
+    return false;
   }
 
 };
