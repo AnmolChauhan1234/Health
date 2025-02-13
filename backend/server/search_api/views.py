@@ -19,6 +19,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from hospital_management.models import Doctor, HospitalDoctor, Service, HospitalService, Treatment, HospitalTreatment
+
 
 # Yes, you can automate this process, so you don't have to manually update the geom field every time you update the latitude and longitude. Instead of manually updating the geom field, you can create a trigger that automatically updates the geom field whenever the latitude or longitude values change.
 
@@ -105,3 +107,81 @@ class NearbyHospitalsView(APIView):
 
         except (TypeError, ValueError):
             return Response({"error": "Invalid location parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class ShowHospitalDetails(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        hospital_id = request.GET.get('id')
+        search_type = request.GET.get("type", "")
+        search_term = request.GET.get("search", "")
+
+
+        hospital = get_object_or_404(Hospital, id=hospital_id)
+        user = get_object_or_404(User, hospital=hospital)
+
+        if search_type == "doctor":
+            doctor = get_object_or_404(Doctor, doctor_name = search_term)
+            hospital_doctor = get_object_or_404(HospitalDoctor, doctor=doctor, hospital=hospital)
+
+            facility = {
+                "doctor_name": doctor.doctor_name,
+                "doctor_image": doctor.doctor_image,
+                "appointment_fees_in_hospital": hospital_doctor.appointment_fees_in_hospital,
+                "specialization_in_hospital": hospital_doctor.specialization_in_hospital,
+                "consultation_days": hospital_doctor.consultation_days,
+                "availability_in_hospital": hospital_doctor.availability_in_hospital,
+            }
+
+
+        elif search_type == "service":
+            service = get_object_or_404(Service, name = search_term)
+            hospital_service = get_object_or_404(HospitalService, service=service, hospital=hospital)
+
+            facility = {
+                "name": service.name,
+                "cost": hospital_service.cost,
+                "available_slots": hospital_service.available_slots,
+            }
+
+
+        elif search_type == "treatment":
+            treatment = get_object_or_404(Treatment, name = search_term)
+            hospital_treatment = get_object_or_404(HospitalTreatment, treatment=treatment, hospital=hospital)
+
+            facility = {
+                "name": treatment.name,
+                "cost": hospital_treatment.cost,
+                "doctor_required": hospital_treatment.doctor_required,
+            }
+
+        result = {
+            "userProfile": {
+                "role": user.role,
+                "name": user.full_name,
+                "email": user.email,
+                "phone_number": user.phone_number,
+                "joined_at": user.joined_at,
+                "profile_picture": user.profile_picture,
+            },
+            "HospitalProfile": {
+                "hospital_address": hospital.hospital_address,
+                "license_number": hospital.license_number,
+                "established_year": hospital.established_year,
+                "bed_capacity": hospital.bed_capacity,
+                "emergency_services": hospital.emergency_services,
+            }
+        }
+
+        return Response({
+            "hospital": result,
+            "facility": facility
+        },
+            status=status.HTTP_200_OK
+        )
+    
+
+
