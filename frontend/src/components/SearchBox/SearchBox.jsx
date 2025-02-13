@@ -84,6 +84,7 @@ function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
         className="border border-gray-400 dark:border-gray-600 p-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         value={filterType}
         onChange={handleFilterTypeChange}
+        defaultValue={'general'}
       >
         <option className="dark:bg-gray-700 dark:text-white" value="doctor">
           Doctors
@@ -93,6 +94,9 @@ function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
         </option>
         <option className="dark:bg-gray-700 dark:text-white" value="treatment">
           Treatment
+        </option>
+        <option className="dark:bg-gray-700 dark:text-white" value="general">
+          General
         </option>
       </select>
     </div>

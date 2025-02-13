@@ -5,7 +5,8 @@ const refreshToken = async () => {
   // api call to custom-refresh.
   try {
     const response = await api.post("/accounts/custom-refresh/" , {} , {
-      withCredentials:true, //Ensuring cookies are sent with the request.
+      withCredentials:true, 
+      //Ensuring cookies are sent with the request.
     });
 
     if(response.status === 200){

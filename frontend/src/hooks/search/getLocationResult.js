@@ -14,7 +14,7 @@ function getLocationResult() {
 
     try {
 
-      const endp = `/search-api/get-nearby-hospitals/?lat=${lat}.7041&lng=${lng}&query=${searchQuery}&type=${filterType}`;
+      const endp = `/search-api/get-nearby-hospitals/?lat=${lat}.7041&lng=${lng}&query=${encodeURIComponent(searchQuery)}&type=${filterType}`;
       console.log("api call to ", endp);
 
       const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);

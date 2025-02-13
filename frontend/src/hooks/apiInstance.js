@@ -3,13 +3,12 @@ import refreshToken from "./refreshToken";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    //Sending cookies along with the request.
-    // withCredentials: true,
   },
   //Sending cookies along with the request.
-  withCredentials: true,
+  
 });
 
 //interceptor for request.
@@ -33,11 +32,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   //return successfull response.
   (response) => {
+    console.log("response received", response)
     return response;
   },
 
   //Error or 401 handling.
   async (error) => {
+    console.log("error occured," , error);
     const originalRequest = error.config;
 
     if (
@@ -46,12 +47,14 @@ api.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
+      console.log("attempting to refersh token.")
 
       try {
         console.log("Generating refresh token");
         const success = await refreshToken();
         if (success) {
           const newToken = sessionStorage.getItem("token");
+          console.log("new token saved");
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return api(originalRequest);
         } else {

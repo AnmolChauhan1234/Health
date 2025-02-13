@@ -46,7 +46,7 @@ function Card({ data ,  searchQuery, filterType}) {
 
   const {getResult , searchData} = getDetailsResult();
 
-  console.log("Card's" , searchQuery , filterType)
+  // console.log("Card's" , searchQuery , filterType)
 
   const handleViewDetails = async () => {
 

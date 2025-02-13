@@ -196,11 +196,18 @@ function Home() {
       {/* Search, Location and button Section starts here*/}
 
       {/* Map Section */}
+      {!isOpen && (
+        <section className="h-max w-full">
+          <Map isDarkMode={darkMode} position={mapPosition} />
+        </section>
+      )}/
+
+{/*       
       {!isOpen && showMap && (
         <section className="h-max w-full">
           <Map isDarkMode={darkMode} position={mapPosition} />
         </section>
-      )}
+      )} */}
 
       {/* Search Results Section */}
       <section className="p-4">
