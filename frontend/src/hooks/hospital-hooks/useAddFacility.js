@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../apiInstance";
 
 function useAddFacility() {
   const [loading , setLoading] = useState(false);
@@ -10,22 +11,24 @@ function useAddFacility() {
     const requestUrl = `/hospital-management/add-${facilityType}/`;
     
     try {
-      const response = await api.post(requestUrl , id);
+      const response = await api.post(requestUrl , {id});
       
-      if(response.status === 200){
-        setLoading(false);
+      if(response.status >= 200 && response.status <= 300){
+        // setLoading(false);
         setError(null);
         return true;
       } else{
         setError("Error in request body");
-        setLoading(false);
+        // setLoading(false);
         return false;
       }
 
     } catch (error) {
       setError(error);
-      setLoading(false);
+      // setLoading(false);
       return false;
+    } finally{
+      setLoading(false)
     }
   }
 

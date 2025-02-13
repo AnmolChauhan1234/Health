@@ -7,5 +7,6 @@ import MyAccount from './MyAccount/MyAccount';
 import Bills from './Bills/Bills';
 import History from './History/History';
 import Manage from './Manage/Manage';
+import DetailsView from './DetailsView/DetailsView';
 
-export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage};
+export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage , DetailsView};

@@ -3,13 +3,15 @@ import { Link, NavLink } from "react-router-dom";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { useMenuContext } from "../../context/MenuContext/MenuContextProvider";
 import { useUserContext } from "../../context/UserContext/UserContextProvider";
-import { useDarkMode } from "../../context/ThemeContext/ThemeContextProvider";
+// import { useDarkMode } from "../../context/ThemeContext/ThemeContextProvider";
+
+// import useGetProfile from "../../hooks/getProfile";
 
 function Header() {
   const { isOpen, toggleMenu } = useMenuContext();
-  const { user } = useUserContext();
+  const { user , profileData } = useUserContext();
 
-  const profilePhoto = user?.profile_photo || "/images/user-dp.jpg";
+  const profilePhoto = profileData?.profilePicture || "/images/user-dp.jpg";
 
   // const profilePhoto = user?.profile_photo || "/images/vermil.jpg";
 
