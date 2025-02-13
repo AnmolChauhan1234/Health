@@ -8,14 +8,23 @@ function getLocationResult() {
 
   // /search-api/get-nearby-hospitals/?lat=YOUR_LATITUDE&lng=YOUR_LONGITUDE
 
-  const fetchLocationResults = async (lat, lng) => {
+  const fetchLocationResults = async (lat, lng, searchQuery, filterType) => {
 
     setloading(true);
 
     try {
 
-      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}`);
+      const endp = `/search-api/get-nearby-hospitals/?lat=${lat}.7041&lng=${lng}&query=${searchQuery}&type=${filterType}`;
+      console.log("api call to ", endp);
+
       const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
+
+      // const response =await api.get(`/search-api/get-nearby-hospitals` , {
+      //   params:{
+      //     lat , lng , query: searchQuery , type: filterType
+      //   }
+      // });
+      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
 
       if(response.status === 200){
         console.log(response.data)
@@ -28,7 +37,7 @@ function getLocationResult() {
       
 
     } catch (error) {
-      setError(error);
+      setError("server error",error);
     } finally{
       setloading(false);
     }
