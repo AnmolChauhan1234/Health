@@ -23,4 +23,5 @@ urlpatterns = [
     path('profiles/',include('profiles.urls')),
     path('hospital-management/',include('hospital_management.urls')),
     path('search-api/',include('search_api.urls')),
+    path('ml_api/',include('ml_api.urls')),
 ]
