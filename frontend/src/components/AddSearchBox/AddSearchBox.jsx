@@ -100,7 +100,7 @@ function AddSearchBox({ type }) {
               );
               handleSelectItem(selected);
             }}
-            className="w-full p-2 rounded border border-gray-300 dark:text-gray-300"
+            className="w-full p-2 rounded border border-gray-300"
           >
             <option value="">Select a {type}</option>
             {searchResults.map((item) => (

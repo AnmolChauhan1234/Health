@@ -3,14 +3,18 @@ import refreshToken from "./refreshToken";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    //Sending cookies along with the request.
+    // withCredentials: true,
   },
+  //Sending cookies along with the request.
+  withCredentials: true,
 });
 
-// Interceptor for request
+//interceptor for request.
 api.interceptors.request.use(
+  //handling config i.e the files sent.
   (config) => {
     const token = sessionStorage.getItem("token");
     if (token) {
@@ -18,37 +22,36 @@ api.interceptors.request.use(
     }
     return config;
   },
+
+  //handle errors via Promise.reject(error);
   (error) => {
     return Promise.reject(new Error(error));
   }
 );
 
-// Interceptor for response
+//interceptor for response.
 api.interceptors.response.use(
-  // Return successful response
+  //return successfull response.
   (response) => {
     return response;
   },
 
-  // Handle errors
+  //Error or 401 handling.
   async (error) => {
     const originalRequest = error.config;
 
-    // Handle 401 Unauthorized errors (token refresh logic)
     if (
       error.response.status === 401 &&
       originalRequest &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-      console.log("Attempting to refresh token.");
 
       try {
         console.log("Generating refresh token");
         const success = await refreshToken();
         if (success) {
           const newToken = sessionStorage.getItem("token");
-          console.log("New token saved");
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return api(originalRequest);
         } else {
@@ -64,12 +67,6 @@ api.interceptors.response.use(
       }
     }
 
-    // Allow 404 responses to pass through without being treated as errors
-    if (error.response.status === 404) {
-      return Promise.resolve(error.response); // Resolve the response instead of rejecting it
-    }
-
-    // Reject all other errors
     return Promise.reject(new Error(error));
   }
 );
