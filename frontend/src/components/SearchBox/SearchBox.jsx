@@ -132,7 +132,7 @@ function SearchBox({
   const handleSuggestionClick = (result) => {
     setSearchQuery(result); // Populate the search box with the selected result
     onResultSelect(result); // Notify the parent component
-    onSearchQueryChange("");
+    // onSearchQueryChange("");
   };
 
   // console.log(

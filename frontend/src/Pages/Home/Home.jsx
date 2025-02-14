@@ -240,7 +240,8 @@ function Home() {
   const { darkMode } = useDarkMode();
 
   // API functions
-  const { data, loading, error, fetchLocationResults } = getLocationResult();
+  const { msg, data, loading, error, fetchLocationResults } = getLocationResult();
+  console.log(msg);
 
   // State for map position
   const [mapPosition, setMapPosition] = useState(null);
@@ -256,31 +257,6 @@ function Home() {
 
   // State for filter type
   const [filterType, setFilterType] = useState("doctor");
-
-  // commented out code
-  // Real-time search effect
-  // useEffect(() => {
-  //   if (searchQuery && filterType !== "symptoms") {
-
-  //     const fetchRealTimeResults = async () => {
-  //       try {
-  //         const response = await api.get(
-  //           `/hospital-management/search-${filterType}s/?q=${searchQuery}`
-  //         );
-  //         if (response.status === 200) {
-  //           const resultData = response.data[`${filterType}s`];
-  //           setRealTimeResults(resultData); // Update real-time results
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching real-time search results:", error);
-  //       }
-  //     };
-
-  //     fetchRealTimeResults();
-  //   } else {
-  //     setRealTimeResults([]); // Clear real-time results if no query or filter is "symptoms"
-  //   }
-  // }, [searchQuery, filterType]);
 
   // Real-time search effect with debouncing
   useEffect(() => {
@@ -411,15 +387,22 @@ function Home() {
         </h2>
         {loading && <p>Loading hospitals...</p>}
         {error && <p className="text-red-500">Error: {error.message}</p>}
+        {msg && <p className="text-amber-500">{msg}</p>}
+        {/* {!loading && !error && results.length === 0 && (
+          <p>No nearby hospitals found.</p>
+        )} */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {results.map((result, index) => (
-            <Card
-              key={index}
-              data={result}
-              searchQuery={searchQuery}
-              filterType={filterType}
-            />
-          ))}
+          
+          { 
+            results.map((result, index) => (
+              <Card
+                key={index}
+                data={result}
+                searchQuery={searchQuery}
+                filterType={filterType}
+              />
+            ))
+          }
         </div>
       </section>
     </main>
