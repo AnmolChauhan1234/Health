@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'profiles',
     'hospital_management',
     'search_api',
-    'ml_api'
+    'ml_api',
+    'payments',
 ]
 
 MIDDLEWARE = [

@@ -78,6 +78,47 @@ from hospital_management.models import Doctor, HospitalDoctor, Service, Hospital
 
 
 
+# class NearbyHospitalsView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def get(self, request):
+#         try:
+#             latitude = float(request.GET.get("lat"))
+#             longitude = float(request.GET.get("lng"))
+#             radius = 10000  # 10 km
+
+#             sql_query = """
+#             SELECT accounts_user.full_name, accounts_hospital.latitude, accounts_hospital.longitude, 
+#                    ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
+#             FROM accounts_hospital
+#             JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
+#             WHERE ST_DWithin(accounts_hospital.geom, ST_MakePoint(%s, %s), %s, true)
+#             ORDER BY distance ASC;
+#             """
+
+#             with connection.cursor() as cursor:
+#                 cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])  
+#                 results = [
+#                     {"name": row[0], "latitude": row[1], "longitude": row[2], "distance": row[3]}
+#                     for row in cursor.fetchall()
+#                 ]
+
+#             return Response(results, status=status.HTTP_200_OK)
+
+#         except (TypeError, ValueError):
+#             return Response({"error": "Invalid location parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+from django.db import connection
+from django.db.models import Min
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from accounts.models import Hospital
+
 class NearbyHospitalsView(APIView):
     permission_classes = [AllowAny]
 
@@ -86,9 +127,13 @@ class NearbyHospitalsView(APIView):
             latitude = float(request.GET.get("lat"))
             longitude = float(request.GET.get("lng"))
             radius = 10000  # 10 km
+            search = request.GET.get("search", "").strip()
+            search_type = request.GET.get("search_type", "").strip()
 
+            # Step 1: Get nearby hospitals using raw SQL
             sql_query = """
-            SELECT accounts_user.full_name, accounts_hospital.latitude, accounts_hospital.longitude, 
+            SELECT accounts_hospital.id, accounts_user.full_name, accounts_hospital.latitude, 
+                   accounts_hospital.longitude, 
                    ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
             FROM accounts_hospital
             JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
@@ -97,16 +142,57 @@ class NearbyHospitalsView(APIView):
             """
 
             with connection.cursor() as cursor:
-                cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])  
-                results = [
-                    {"name": row[0], "latitude": row[1], "longitude": row[2], "distance": row[3]}
-                    for row in cursor.fetchall()
-                ]
+                cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])
+                nearby_hospitals = cursor.fetchall()  
+
+            if not nearby_hospitals:
+                return Response({"message": "No nearby hospitals found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Extract hospital IDs and distance mapping
+            hospital_distance_map = {row[0]: row[4] for row in nearby_hospitals}  
+            nearby_hospital_ids = list(hospital_distance_map.keys())
+
+            # Step 2: Use ORM to filter based on `search_type`
+            hospitals = Hospital.objects.filter(id__in=nearby_hospital_ids)
+
+            if search_type == "doctor":
+                hospitals = hospitals.filter(hospitaldoctor__doctor__doctor_name__icontains=search) \
+                    .annotate(min_cost=Min("hospitaldoctor__appointment_fees_in_hospital")) \
+                    .order_by("min_cost")
+
+            elif search_type == "service":
+                hospitals = hospitals.filter(hospitalservice__service__name__icontains=search) \
+                    .annotate(min_cost=Min("hospitalservice__cost")) \
+                    .order_by("min_cost")
+
+            elif search_type == "treatment":
+                hospitals = hospitals.filter(hospitaltreatment__treatment__name__icontains=search) \
+                    .annotate(min_cost=Min("hospitaltreatment__cost")) \
+                    .order_by("min_cost")
+
+            elif search_type == "symptom":
+                hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
+                    .annotate(min_cost=Min("hospitaltreatment__cost")) \
+                    .order_by("min_cost")
+
+            # Step 3: Prepare the response
+            results = [
+                {
+                    "id": hospital.user.id,
+                    "name": hospital.user.full_name,
+                    "latitude": hospital.latitude,
+                    "longitude": hospital.longitude,
+                    "distance": round(hospital_distance_map[hospital.id], 2),  # Attach SQL distance
+                    "cost": hospital.min_cost if hasattr(hospital, 'min_cost') else None  # Handle missing cost
+                }
+                for hospital in hospitals
+            ]
 
             return Response(results, status=status.HTTP_200_OK)
 
         except (TypeError, ValueError):
             return Response({"error": "Invalid location parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

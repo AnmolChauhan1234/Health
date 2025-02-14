@@ -34,7 +34,8 @@ for key, paths in MODEL_FILES.items():
         print(f"Error loading {key} model: {e}")
 
 # Department Mapping
-DEPARTMENT_MAPPING = {
+
+DEPARTMENT_MAPPING = { 
     1: "Cardiology",
     2: "Neurology",
     3: "Orthopedic",
@@ -42,8 +43,26 @@ DEPARTMENT_MAPPING = {
     5: "Surgery",
     6: "Maternity",
     7: "Ophthalmology",
-    8: "Otolaryngology",
+    8: "Otolaryngology"
 }
+
+DEPARTMENT_TO_SPECIALIZATIONS = {
+    1: ["Cardiologist"],
+    2: ["Neurosurgery", "Neurologist", "Psychiatrist", "Addiction Psychiatrist", "Neuro Physiotherapist", "Therapy"],
+    3: ["Orthopedic surgeon", "Joint Replacement Surgeon", "Spine And Pain Specialist", "Physiotherapist"],
+    4: ["Radiation Oncologist", "Surgical Oncologist", "Medical Oncologist"],
+    5: [
+        "General Physician", "Gastroenterologist", "Vascular Surgeon", "Pulmonologist",
+        "Tuberculous and chest Diseases Specialist", "Special Interest in Diabetology",
+        "Radiologist", "Pediatric Surgeon", "Laparoscopic Surgeon", "Pediatrician",
+        "Dermatologist", "Homeopath", "Ayurveda", "Urologist", "Emergency", "Diagnostics",
+        "Medical Checkups"
+    ],
+    6: ["Gynecologist", "Infertility Specialist"],
+    7: ["Ophthalmologist/ Eye Surgeon"],
+    8: ["ENT Surgeon", "Dentist"]
+}
+
 
 @csrf_exempt
 def predict(request):
@@ -70,7 +89,7 @@ def predict(request):
             prediction = model.predict(X_tfidf).tolist()
 
             if query_type == "service":
-                prediction = DEPARTMENT_MAPPING.get(prediction[0], "Not found")
+                prediction = DEPARTMENT_TO_SPECIALIZATIONS.get(prediction[0], "Not found")
 
             return JsonResponse({
                 "query_type": query_type,
