@@ -50,9 +50,69 @@
 
 // export default SearchBox;
 
+// import { useState } from "react";
+
+// function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
+//   const [searchQuery, setSearchQuery] = useState(""); // User input
+//   const [filterType, setFilterType] = useState("doctors"); // Default filter
+
+//   // Handle search input change
+//   const handleSearchQueryChange = (e) => {
+//     setSearchQuery(e.target.value);
+//     onSearchQueryChange(e.target.value);
+//   };
+
+//   // Handle filter type change
+//   const handleFilterTypeChange = (e) => {
+//     setFilterType(e.target.value);
+//     onFilterTypeChange(e.target.value);
+//   };
+
+//   return (
+//     <div className="flex flex-col gap-y-1 sm:flex-row sm:gap-y-0 sm:gap-x-1 items-center">
+
+//       {/* Search Input section starts here */}
+//       <input
+//         type="text"
+//         placeholder="Search..."
+//         className="border border-gray-400 dark:border-gray-600 p-2 rounded w-full sm:w-2/3 text-gray-500 dark:text-gray-200 shadow-md focus:outline focus:outline-amber-500 focus:border-none"
+//         value={searchQuery}
+//         onChange={handleSearchQueryChange}
+//       />
+
+//       <select
+//         className="border border-gray-400 dark:border-gray-600 p-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+//         value={filterType}
+//         onChange={handleFilterTypeChange}
+//         defaultValue={'general'}
+//       >
+//         <option className="dark:bg-gray-700 dark:text-white" value="doctor">
+//           Doctors
+//         </option>
+//         <option className="dark:bg-gray-700 dark:text-white" value="service">
+//           Services
+//         </option>
+//         <option className="dark:bg-gray-700 dark:text-white" value="treatment">
+//           Treatment
+//         </option>
+//         <option className="dark:bg-gray-700 dark:text-white" value="general">
+//           General
+//         </option>
+//       </select>
+//     </div>
+//   );
+// }
+
+// export default SearchBox;
+
 import { useState } from "react";
 
-function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
+function SearchBox({
+  onSearchQueryChange,
+  onFilterTypeChange,
+  onResultSelect,
+  realTimeResults,
+}) {
   const [searchQuery, setSearchQuery] = useState(""); // User input
   const [filterType, setFilterType] = useState("doctors"); // Default filter
 
@@ -68,10 +128,20 @@ function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
     onFilterTypeChange(e.target.value);
   };
 
-  return (
-    <div className="flex flex-col gap-y-1 sm:flex-row sm:gap-y-0 sm:gap-x-1 items-center">
+  // Handle selection of a real-time search result
+  const handleSuggestionClick = (result) => {
+    setSearchQuery(result); // Populate the search box with the selected result
+    onResultSelect(result); // Notify the parent component
+    onSearchQueryChange("");
+  };
 
-      {/* Search Input section starts here */}
+  // console.log(
+  //   "SerachBox.js" , realTimeResults
+  // )
+
+  return (
+    <div className="flex flex-col gap-y-1 sm:flex-row sm:gap-y-0 sm:gap-x-1 items-center relative">
+      {/* Search Input section */}
       <input
         type="text"
         placeholder="Search..."
@@ -80,11 +150,11 @@ function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
         onChange={handleSearchQueryChange}
       />
 
+      {/* Filter Dropdown */}
       <select
         className="border border-gray-400 dark:border-gray-600 p-2 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         value={filterType}
         onChange={handleFilterTypeChange}
-        defaultValue={'general'}
       >
         <option className="dark:bg-gray-700 dark:text-white" value="doctor">
           Doctors
@@ -93,12 +163,27 @@ function SearchBox({ onSearchQueryChange, onFilterTypeChange }) {
           Services
         </option>
         <option className="dark:bg-gray-700 dark:text-white" value="treatment">
-          Treatment
+          Treatments
         </option>
-        <option className="dark:bg-gray-700 dark:text-white" value="general">
-          General
+        <option className="dark:bg-gray-700 dark:text-white" value="symptom">
+          Symptoms
         </option>
       </select>
+
+      {/* Real-time Search Results Dropdown */}
+      {realTimeResults.length > 0 && (
+        <div className="absolute top-full left-0 w-full sm:w-2/3 max-h-[50vh] overflow-y-scroll bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg mt-1 z-10">
+          {realTimeResults.map((item) => (
+            <div
+              key={item.id}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+              onClick={() => handleSuggestionClick(item.name)}
+            >
+              {item.name}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

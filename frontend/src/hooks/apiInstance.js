@@ -32,7 +32,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   //return successfull response.
   (response) => {
-    console.log("response received", response)
+    // console.log("response received", response)
     return response;
   },
 
