@@ -180,6 +180,7 @@ class NearbyHospitalsView(APIView):
                 {
                     "id": hospital.user.id,
                     "name": hospital.user.full_name,
+                    "profile_picture": hospital.user.profile_picture,
                     "latitude": hospital.latitude,
                     "longitude": hospital.longitude,
                     "distance": round(hospital_distance_map[hospital.id], 2),  # Attach SQL distance
