@@ -385,7 +385,7 @@ class EditHospitalManagement(APIView):
 
 
 class SearchDoctorView(APIView):
-    permission_classes = [AllowAny]      # because this view is also used for homepage and guest users can also access it
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         # Get query parameter and remove leading/trailing spaces
@@ -410,7 +410,7 @@ class SearchDoctorView(APIView):
 
 
 class SearchServiceView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         query = request.query_params.get('q').strip()
@@ -426,7 +426,7 @@ class SearchServiceView(APIView):
 
 
 class SearchTreatmentAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         query = request.query_params.get('q').strip()

@@ -78,47 +78,6 @@ from hospital_management.models import Doctor, HospitalDoctor, Service, Hospital
 
 
 
-# class NearbyHospitalsView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def get(self, request):
-#         try:
-#             latitude = float(request.GET.get("lat"))
-#             longitude = float(request.GET.get("lng"))
-#             radius = 10000  # 10 km
-
-#             sql_query = """
-#             SELECT accounts_user.full_name, accounts_hospital.latitude, accounts_hospital.longitude, 
-#                    ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
-#             FROM accounts_hospital
-#             JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
-#             WHERE ST_DWithin(accounts_hospital.geom, ST_MakePoint(%s, %s), %s, true)
-#             ORDER BY distance ASC;
-#             """
-
-#             with connection.cursor() as cursor:
-#                 cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])  
-#                 results = [
-#                     {"name": row[0], "latitude": row[1], "longitude": row[2], "distance": row[3]}
-#                     for row in cursor.fetchall()
-#                 ]
-
-#             return Response(results, status=status.HTTP_200_OK)
-
-#         except (TypeError, ValueError):
-#             return Response({"error": "Invalid location parameters"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-from django.db import connection
-from django.db.models import Min
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from accounts.models import Hospital
-
 class NearbyHospitalsView(APIView):
     permission_classes = [AllowAny]
 
@@ -127,13 +86,9 @@ class NearbyHospitalsView(APIView):
             latitude = float(request.GET.get("lat"))
             longitude = float(request.GET.get("lng"))
             radius = 10000  # 10 km
-            search = request.GET.get("search", "").strip()
-            search_type = request.GET.get("search_type", "").strip()
 
-            # Step 1: Get nearby hospitals using raw SQL
             sql_query = """
-            SELECT accounts_hospital.id, accounts_user.full_name, accounts_hospital.latitude, 
-                   accounts_hospital.longitude, 
+            SELECT accounts_user.full_name, accounts_hospital.latitude, accounts_hospital.longitude, 
                    ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
             FROM accounts_hospital
             JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
@@ -192,7 +147,6 @@ class NearbyHospitalsView(APIView):
 
         except (TypeError, ValueError):
             return Response({"error": "Invalid location parameters"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
