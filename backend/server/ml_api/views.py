@@ -69,10 +69,10 @@ def predict(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            query_type = data.get("querytype", "").strip().lower()
-            latitude = data.get("latitude", "")
-            longitude = data.get("longitude", "")
-            input_text = data.get("text", "").strip()
+            query_type = data.get("search_type", "").strip().lower()
+            latitude = data.get("lat", "")
+            longitude = data.get("lng", "")
+            input_text = data.get("search", "").strip()
 
             if not input_text:
                 return JsonResponse({"error": "No input text provided"}, status=400)
