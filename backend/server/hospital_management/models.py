@@ -72,7 +72,10 @@ class Treatment(models.Model):
         ('oncology', 'Cancer Treatments'),
         ('surgery', 'General Surgery'),
         ('maternity', 'Maternity & Childbirth'),
+        ('ophthalmology', 'Ophthalmology Treatments'),
+        ('otolaryngology', 'Otolaryngology Treatments'),
     ]
+
     
     name = models.CharField(max_length=255)
     description = models.TextField()

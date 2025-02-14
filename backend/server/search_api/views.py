@@ -170,10 +170,10 @@ class NearbyHospitalsView(APIView):
                     .annotate(min_cost=Min("hospitaltreatment__cost")) \
                     .order_by("min_cost")
 
-            elif search_type == "symptom":
-                hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
-                    .annotate(min_cost=Min("hospitaltreatment__cost")) \
-                    .order_by("min_cost")
+            # elif search_type == "symptom":
+            #     hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
+            #         .annotate(min_cost=Min("hospitaltreatment__cost")) \
+            #         .order_by("min_cost")
 
             # Step 3: Prepare the response
             results = [
