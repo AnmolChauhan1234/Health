@@ -54,3 +54,5 @@ function getLocationResult() {
 }
 
 export default getLocationResult;
+
+
