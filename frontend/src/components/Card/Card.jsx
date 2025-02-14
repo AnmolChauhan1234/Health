@@ -1,99 +1,66 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import getDetailsResult from "../../hooks/search/getDetailsResult";
+import api from "../../hooks/apiInstance";
 
-function Card({ data ,  searchQuery, filterType}) {
-
-
-  //naivgation here.
+function Card({ data, searchQuery, filterType }) {
   const navigate = useNavigate();
-  //dummy data section starts here.
+  const { id, name, profile_picture, cost } = data;
 
-  const dummyData = {
-    hospital: {
-      userProfile: {
-        role: "Admin",
-        name: "John Doe",
-        email: "johndoe@example.com",
-        phone_number: "+1234567890",
-        joined_at: "2021-01-15",
-        profile_picture: "https://via.placeholder.com/150",
-      },
-      HospitalProfile: {
-        hospital_address: "123 Main St, Springfield, USA",
-        license_number: "HL123456",
-        established_year: "1995",
-        bed_capacity: "200",
-        emergency_services: true,
-      },
-    },
-    facility: {
-      name: "X-Ray",
-      cost: "$50",
-      available_slots: "10",
-      // doctor_name: "Dr. Smith",
-      // doctor_image: "https://via.placeholder.com/150",
-      // appointment_fees_in_hospital: "$100",
-      // specialization_in_hospital: "Cardiology",
-      // consultation_days: "Mon, Wed, Fri",
-      // availability_in_hospital: "9:00 AM - 5:00 PM"
-    },
-  };
-  
-  const {id = 4, name, latitude, longitude, distance } = data;
-  // const [data1 , setData1] =  useState();
-  // setData1(dummyData)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const {getResult , searchData} = getDetailsResult();
-
-  // console.log("Card's" , searchQuery , filterType)
-
+  // Function to send details to API
   const handleViewDetails = async () => {
+    console.log("Viewing details for:", id);
 
-    console.log("fetching inside the card.")
+    // Construct API endpoint
+    const endPoint = `/search-api/view-hospital-details/?id=${id}&type=${filterType}&search=${searchQuery}`;
+    console.log("API Endpoint:", endPoint);
 
-    const success = await getResult(id, filterType, searchQuery);
-    navigate("/details", { state: { hospitalData: dummyData } });
-    
-
-    // if (success) {
-
-    //   console.log("Details fetched successfully for:", id);
-    //   navigate("/details", { state: { hospitalData: searchData } });
-
-    // } else {
-    //   console.error("Failed to fetch hospital details.");
-    // }
+    try {
+      setLoading(true);
+      const response = await api.get(endPoint);
+      if (response.status === 200) {
+        navigate("/details", { state: { hospitalData: response.data } });
+      } else {
+        setError("Failed to fetch details");
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6 mb-4 transition-all duration-200 hover:shadow-xl hover:scale-105">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 px-3 mb-4 transition-all duration-200 hover:shadow-xl hover:scale-105">
+      <div className="flex justify-center mb-4">
+        <img
+          src={profile_picture || "https://via.placeholder.com/150"}
+          alt={name}
+          className="w-20 h-20 rounded-full object-cover"
+        />
+      </div>
+
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2">
         {name}
       </h3>
-      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-        <p>
-          <span className="font-medium">Latitude:</span> {latitude}
-        </p>
-        <p>
-          <span className="font-medium">Longitude:</span> {longitude}
-        </p>
-        <p>
-          <span className="font-medium">Distance:</span> {distance} km
-        </p>
-      </div>
 
-      {/* View link starts here */}
-      <div className="mt-4">
+      <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+        <span className="font-medium">Cost:</span> {cost ? `₹${cost}` : "N/A"}
+      </p>
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      <div className="mt-4 flex justify-center">
         <button
-          className="bg-blue-500 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-amber-600 transition-colors duration-200"
+          className="bg-blue-500 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-amber-600 transition-colors duration-200 cursor-pointer"
           onClick={handleViewDetails}
+          disabled={loading}
         >
-          View Details
+          {loading ? "Loading..." : "View Details"}
         </button>
       </div>
-      {/* Link section ends here */}
-
     </div>
   );
 }
