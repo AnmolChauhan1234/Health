@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { useRef, useState } from "react";
+import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 
 function ThreeDModel() {
+  const modelRef = useRef();
+  const { scene } = useGLTF("/models/humanoid.glb");
+  const [hovered, setHovered] = useState(false);
+
+  useFrame(() => {
+    if (!hovered && modelRef.current) {
+      modelRef.current.rotation.y += 0.01; // Slow rotation
+    }
+  });
+
+  const handlePointerMove = (event) => {
+    if (!modelRef.current) return;
+    const { clientX, clientY } = event;
+    const { innerWidth, innerHeight } = window;
+
+    const xRotation = (clientY / innerHeight - 0.5) * Math.PI;
+    const yRotation = (clientX / innerWidth - 0.5) * Math.PI;
+
+    modelRef.current.rotation.x = -xRotation * 0.5; // Reduce effect
+    modelRef.current.rotation.y = yRotation * 0.5;
+  };
+
   return (
-    <div className="w-full h-[500px]">
-      <iframe
-        title="DNA Model"
-        src="https://sketchfab.com/models/6c223b3beea04cb69b5c531eef8ac88c/embed" // Replace with your Sketchfab embed link
-        style={{ border: "none" }}
-        width="100%"
-        height="100%"
-        // allow="autoplay; fullscreen; xr-spatial-tracking"
+    <group position={[0, -1, 0]}>
+      <primitive
+        ref={modelRef}
+        object={scene}
+        scale={[1.5, 1.5, 1.5]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onPointerMove={handlePointerMove}
       />
-    </div>
+    </group>
   );
 }
 
