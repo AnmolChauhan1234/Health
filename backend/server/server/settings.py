@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'hospital_management',
     'search_api',
     'payments',
+    'ml_app',
 ]
 
 MIDDLEWARE = [
