@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'search_api',
     'ml_api',
     'payments',
+    'history',
 ]
 
 MIDDLEWARE = [

@@ -23,6 +23,7 @@ from hospital_management.models import Doctor, HospitalDoctor, Service, Hospital
 from accounts.models import User, Patient
 from .models import Billing, BillingDetails
 from datetime import timedelta, date
+from history.models import BillHistory
 
 # Create your views here.
 
@@ -165,6 +166,17 @@ class CreateBill(APIView):
             due_date=date.today() + timedelta(days=7)
         )
 
+
+
+        # Add the bill to history
+        BillHistory.objects.create(
+            patient=patient,
+            hospital=hospital,
+            billing=bill,
+            total_amount=bill.total_amount,  # Initially 0
+            status=bill.status
+        )
+
         return Response({"message": "Bill created successfully", "bill_id": bill.id}, status=status.HTTP_201_CREATED)
 
 
@@ -206,7 +218,7 @@ class AddBillDetails(APIView):
                 service=hospital_service,
                 amount = hospital_service.cost,
                 type = "service"
-                )
+            )
             
 
 
@@ -220,7 +232,7 @@ class AddBillDetails(APIView):
                 treatment=hospital_treatment,
                 amount = hospital_treatment.cost,
                 type = "treatment"
-                )
+            )
             
         
         else:

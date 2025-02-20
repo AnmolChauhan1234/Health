@@ -25,4 +25,5 @@ urlpatterns = [
     path('search-api/',include('search_api.urls')),
     path('payments/',include('payments.urls')),
     path('ml_api/',include('ml_api.urls')),
+    path('history/',include('history.urls')),
 ]

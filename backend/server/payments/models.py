@@ -12,6 +12,7 @@ from datetime import timedelta
 # Assuming Patient, Hospital, Doctor, ServiceHospital, and TreatmentHospital models are already defined
 from accounts.models import Patient, Hospital
 from hospital_management.models import HospitalService, HospitalTreatment, HospitalDoctor
+from history.models import BillHistory
 
 # class Billing(models.Model):
 #     BILL_STATUS_CHOICES = [
@@ -54,10 +55,24 @@ class Billing(models.Model):
     status = models.CharField(max_length=10, choices=BILL_STATUS_CHOICES, default='pending')
     description = models.TextField(blank=True, null=True)
 
+    # def update_total_amount(self):
+    #     """Recalculate total amount from related BillingDetails."""
+    #     self.total_amount = self.details.aggregate(models.Sum('amount'))['amount__sum'] or 0
+    #     self.save(update_fields=['total_amount'])  # Save only the total_amount field
+
+
+
     def update_total_amount(self):
-        """Recalculate total amount from related BillingDetails."""
+        """Recalculate total amount from related BillingDetails and update history."""
         self.total_amount = self.details.aggregate(models.Sum('amount'))['amount__sum'] or 0
         self.save(update_fields=['total_amount'])  # Save only the total_amount field
+
+        # Update history
+        BillHistory.objects.update_or_create(
+            billing=self,
+            defaults={"total_amount": self.total_amount, "status": self.status}
+        )
+
 
     def __str__(self):
         return f"Bill for {self.patient.user.full_name if self.patient else 'Unknown'} - {self.total_amount}"
