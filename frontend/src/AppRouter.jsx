@@ -1,4 +1,3 @@
-// AppRouter.jsx
 import React from "react";
 import {
   createBrowserRouter,
@@ -19,16 +18,20 @@ import {
   Bills,
   Manage,
   DetailsView,
+  BillDetailsPage,
+  DirectPaymentPage,
+  EMIPaymentPage,
+  AddBillPage,
+  BillDetailsHistory,
 } from "./Pages/export";
 
 function AppRouter() {
   const { userRole } = useUserContext();
 
-  
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
+        {/* Public Routes */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
@@ -45,9 +48,27 @@ function AppRouter() {
         <Route path="/dashboard" element={<Layout />}>
           <Route index element={<Profile role={userRole} />} />
           <Route path="accounts" element={<MyAccount role={userRole} />} />
-          <Route path="bills" element={<Bills role={userRole} />} />
           <Route path="history" element={<History role={userRole} />} />
           <Route path="manage" element={<Manage />} />
+
+          {/* Bills Route with Nested Routes */}
+          <Route path="bills">
+            <Route index element={<Bills role={userRole} />} />
+            <Route path='add-bill-details' element={<AddBillPage />} />,
+            <Route path="bill-details/:billing_id" element={ <BillDetailsHistory />}/>
+            {/* <Route
+              path=":billId"
+              element={<BillDetailsPage role={userRole} />}
+            />
+            <Route
+              path=":billId/pay-direct"
+              element={<DirectPaymentPage role={userRole} />}
+            />
+            <Route
+              path=":billId/pay-emi"
+              element={<EMIPaymentPage role={userRole} />}
+            /> */}
+          </Route>
         </Route>
       </>
     )
