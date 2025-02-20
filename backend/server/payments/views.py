@@ -20,6 +20,9 @@ from django.utils.timezone import now
 from django.shortcuts import get_object_or_404
 from accounts.models import Hospital
 from hospital_management.models import Doctor, HospitalDoctor, Service, HospitalService, Treatment, HospitalTreatment
+from accounts.models import User, Patient
+from .models import Billing, BillingDetails
+from datetime import timedelta, date
 
 # Create your views here.
 
@@ -111,6 +114,119 @@ class SearchTreatmentAPIView(APIView):
         
         return Response({"treatments": results})
     
+
+
+
+class SearchUserAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        hospital_user = request.user
+
+        hospital = get_object_or_404(Hospital, user=hospital_user)
+
+        query = request.query_params.get("q", "").strip()
+
+
+        if not query:
+            return Response({"error": "Query parameter is required"}, status=400)
+        
+        users = User.objects.filter(name__icontains = query)
+
+        if not users.exists():
+            return Response({"message": "No doctors found"}, status=404)
+        
+
+        results = [{"id": user.id, "name": user.name} for user in users]
+
+        return Response({"users": results})
+
+
+
+
+class CreateBill(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        patient_id = request.data.get('id')
+        hospital_user = request.user
+
+        # Ensure the patient exists
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        hospital = get_object_or_404(Hospital, user=hospital_user)
+
+        # Create the billing record
+        bill = Billing.objects.create(
+            patient=patient, 
+            hospital=hospital,
+            status="pending",
+            due_date=date.today() + timedelta(days=7)
+        )
+
+        return Response({"message": "Bill created successfully", "bill_id": bill.id}, status=status.HTTP_201_CREATED)
+
+
+
+
+class AddBillDetails(APIView):
+
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        hospital_user = request.user
+        billing_id = request.data.get('id')
+        facility_id = request.data.get('facility_id')
+        facility_type = request.data.get('facility_type')
+
+
+        billing = get_object_or_404(Billing, id=billing_id)
+        hospital = get_object_or_404(Hospital, user=hospital_user)
+
+
+        if facility_type == "doctor":
+            doctor = get_object_or_404(Doctor, id=facility_id)
+            hospital_doctor = get_object_or_404(HospitalDoctor, hospital=hospital, doctor=doctor)
+
+            bill_details = BillingDetails.objects.create(
+                billing=billing,
+                doctor=hospital_doctor,
+                amount = hospital_doctor.appointment_fees_in_hospital,
+                type = "doctor"
+            )
+
+
+
+        elif facility_type == "service":
+            service = get_object_or_404(Service, id=facility_id)
+            hospital_service = get_object_or_404(HospitalService, hospital=hospital, service=service)
+
+            bill_details = BillingDetails.objects.create(
+                billing=billing,
+                service=hospital_service,
+                amount = hospital_service.cost,
+                type = "service"
+                )
+            
+
+
+
+        elif facility_type == "treatment":
+            treatment = get_object_or_404(Treatment, id=facility_id)
+            hospital_treatment = get_object_or_404(HospitalTreatment, hospital=hospital, treatment=treatment)
+
+            bill_details = BillingDetails.objects.create(
+                billing=billing,
+                treatment=hospital_treatment,
+                amount = hospital_treatment.cost,
+                type = "treatment"
+                )
+            
+        
+        else:
+            return Response({"error": "Invalid facility type"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "Bill details added successfully", "bill_detail_id": bill_details.id}, status=status.HTTP_201_CREATED)
 
 
 
