@@ -232,3 +232,15 @@ class AddBillDetails(APIView):
 
 
 
+class DeleteBillDetails(APIView):
+
+    permission_classes = [IsAuthenticated]
+    def delete(self, request):
+        bill_details_id = request.data.get('id')
+
+
+        bill_details = get_object_or_404(BillingDetails, id=bill_details_id)
+        bill_details.delete()
+        
+
+        return Response({"message": "Bill details deleted successfully"}, status=status.HTTP_200_OK)
