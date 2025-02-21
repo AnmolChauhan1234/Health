@@ -1,8 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../../context/UserContext/UserContextProvider";
 
 function BillingList({ bills, onSelectBill }) {
   const navigate = useNavigate();
+
+  const { role } = useUserContext();
 
   // Format the date to a more readable format
   const formatDate = (dateString) => {
@@ -29,16 +32,25 @@ function BillingList({ bills, onSelectBill }) {
             key={bill.bill_history_id}
             className="flex flex-col sm:flex-row items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow"
           >
-            {/* Bill Summary */}
+            {/* Bill Summary starts here*/}
             <div className="flex-1 w-full sm:w-auto">
-              <p className="text-sm text-gray-900 dark:text-white">
-                <span className="font-semibold">Patient:</span>{" "}
-                {bill.patient_name || "N/A"}
+
+              {/* Name section starts here */}
+              <p 
+                className="text-sm text-gray-900 dark:text-white"
+              >
+                <span className="font-semibold">
+                  {role === 'hospital'? "Patient Name : " : "Hospital Name : "}
+                </span>{" "}
+                { role === 'hospital' ? bill.patient_name || "N/A" : bill.hospital_name || "N/A"}
               </p>
+              {/* Name section ends here */}
+
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <span className="font-semibold">Total Amount:</span> ₹
                 {bill.total_amount.toFixed(2)}
               </p>
+
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <span className="font-semibold">Status:</span>{" "}
                 <span
@@ -51,11 +63,13 @@ function BillingList({ bills, onSelectBill }) {
                   {bill.status}
                 </span>
               </p>
+
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <span className="font-semibold">Last Updated:</span>{" "}
                 {formatDate(bill.updated_at)}
               </p>
             </div>
+            {/* Bill Summary ends here*/}
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
@@ -65,15 +79,18 @@ function BillingList({ bills, onSelectBill }) {
               >
                 Show Bill Details
               </button>
-              <button
-                onClick={() => {
-                  onSelectBill(bill);
-                  // navigate(`bill-details/${bill.billing_id}`);
-                }}
-                className="w-full sm:w-auto bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors cursor-pointer"
-              >
-                Add Bill Details
-              </button>
+
+              {role === "hospital" && (
+                <button
+                  onClick={() => {
+                    onSelectBill(bill);
+                    // navigate(`bill-details/${bill.billing_id}`);
+                  }}
+                  className="w-full sm:w-auto bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors cursor-pointer"
+                >
+                  Add Bill Details
+                </button>
+              )}
             </div>
           </div>
         ))
