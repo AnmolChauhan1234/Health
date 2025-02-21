@@ -139,7 +139,7 @@ class SearchUserAPIView(APIView):
             return Response({"message": "No patient found"}, status=404)
         
 
-        results = [{"id": patient.user.id, "name": patient.user.full_name} for patient in patients]
+        results = [{"id": patient.id, "name": patient.user.full_name} for patient in patients]
 
         return Response({"users": results})
 
