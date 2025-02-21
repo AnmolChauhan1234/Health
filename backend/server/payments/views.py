@@ -123,9 +123,9 @@ class SearchUserAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        hospital_user = request.user
+        # hospital_user = request.user
 
-        hospital = get_object_or_404(Hospital, user=hospital_user)
+        # hospital = get_object_or_404(Hospital, user=hospital_user)
 
         query = request.query_params.get("q", "").strip()
 
@@ -133,13 +133,13 @@ class SearchUserAPIView(APIView):
         if not query:
             return Response({"error": "Query parameter is required"}, status=400)
         
-        users = User.objects.filter(full_name__icontains = query)
+        patients = Patient.objects.filter(user__full_name__icontains = query)
 
-        if not users.exists():
-            return Response({"message": "No doctors found"}, status=404)
+        if not patients.exists():
+            return Response({"message": "No patient found"}, status=404)
         
 
-        results = [{"id": user.id, "name": user.full_name} for user in users]
+        results = [{"id": patient.user.id, "name": patient.user.full_name} for patient in patients]
 
         return Response({"users": results})
 
