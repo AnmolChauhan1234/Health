@@ -133,7 +133,7 @@ class SearchUserAPIView(APIView):
         if not query:
             return Response({"error": "Query parameter is required"}, status=400)
         
-        users = User.objects.filter(name__icontains = query)
+        users = User.objects.filter(full_name__icontains = query)
 
         if not users.exists():
             return Response({"message": "No doctors found"}, status=404)
