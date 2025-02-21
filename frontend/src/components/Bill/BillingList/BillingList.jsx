@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function BillingList({ bills }) {
+function BillingList({ bills, onSelectBill }) {
   const navigate = useNavigate();
 
   // Format the date to a more readable format
@@ -27,13 +27,13 @@ function BillingList({ bills }) {
         bills.map((bill) => (
           <div
             key={bill.bill_history_id}
-            className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+            className="flex flex-col sm:flex-row items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow"
           >
             {/* Bill Summary */}
-            <div className="flex-1">
+            <div className="flex-1 w-full sm:w-auto">
               <p className="text-sm text-gray-900 dark:text-white">
                 <span className="font-semibold">Patient:</span>{" "}
-                {bill.patient || "N/A"}
+                {bill.patient_name || "N/A"}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <span className="font-semibold">Total Amount:</span> ₹
@@ -57,13 +57,24 @@ function BillingList({ bills }) {
               </p>
             </div>
 
-            {/* Show History Button */}
-            <button
-              onClick={() => navigate(`bill-details/${bill.billing_id}`)}
-              className="bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-amber-600 transition-cus cursor-pointer"
-            >
-              Show History
-            </button>
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+              <button
+                onClick={() => navigate(`bill-details/${bill.billing_id}`)}
+                className="w-full sm:w-auto bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-amber-600 transition-colors cursor-pointer"
+              >
+                Show Bill Details
+              </button>
+              <button
+                onClick={() => {
+                  onSelectBill(bill);
+                  // navigate(`bill-details/${bill.billing_id}`);
+                }}
+                className="w-full sm:w-auto bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors cursor-pointer"
+              >
+                Add Bill Details
+              </button>
+            </div>
           </div>
         ))
       )}

@@ -56,6 +56,7 @@ function AppRouter() {
             <Route index element={<Bills role={userRole} />} />
             <Route path='add-bill-details' element={<AddBillPage />} />,
             <Route path="bill-details/:billing_id" element={ <BillDetailsHistory />}/>
+            <Route path='add-bill-details' element={<AddBillPage />} />
             {/* <Route
               path=":billId"
               element={<BillDetailsPage role={userRole} />}
