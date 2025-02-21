@@ -20,7 +20,7 @@ import {
   Bills,
   Manage,
   DetailsView,
-  BillDetailsPage,
+  BillPaymentPage,
   DirectPaymentPage,
   EMIPaymentPage,
   AddBillPage,

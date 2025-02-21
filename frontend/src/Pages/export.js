@@ -12,10 +12,10 @@ import DetailsView from './DetailsView/DetailsView';
 //Payments and Billing 
 import EMIPaymentPage from './EMIPaymentPage/EMIPaymentPage';
 import DirectPaymentPage from './DirectPaymentPage/DirectPaymentPage';
-import BillDetailsPage from './BillDetailsPage/BillDetailsPage';
 import AddBillPage from './AddBillPage/AddBillPage';
 
 import BillDetailsHistory from './BillDetailsHistory/BillDetailsHistory';
+import BillPaymentPage from './BillPaymentPage/BillPaymentPage';
 
 
-export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage , DetailsView , EMIPaymentPage , DirectPaymentPage , BillDetailsPage , AddBillPage , BillDetailsHistory};
+export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage , DetailsView , EMIPaymentPage , DirectPaymentPage  , AddBillPage , BillDetailsHistory , BillPaymentPage};
