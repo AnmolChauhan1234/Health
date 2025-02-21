@@ -139,7 +139,7 @@ class SearchUserAPIView(APIView):
             return Response({"message": "No doctors found"}, status=404)
         
 
-        results = [{"id": user.id, "name": user.name} for user in users]
+        results = [{"id": user.id, "name": user.full_name} for user in users]
 
         return Response({"users": results})
 
@@ -165,8 +165,7 @@ class CreateBill(APIView):
             status="pending",
             due_date=date.today() + timedelta(days=7)
         )
-
-
+        
 
         # Add the bill to history
         BillHistory.objects.create(

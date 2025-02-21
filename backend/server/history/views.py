@@ -46,6 +46,8 @@ class BillHistoryView(APIView):
                 {
                     'bill_history_id': entry.id,  # Explicitly naming it as bill_history_id
                     'billing_id': entry.billing.id,  # Billing ID
+                    'patient_name': entry.billing.patient.user.full_name if entry.billing.patient else "Unknown",
+                    'hospital_name': entry.billing.hospital.user.full_name if entry.billing.hospital else "Unknown",
                     'total_amount': entry.total_amount,
                     'status': entry.status,
                     'updated_at': entry.updated_at.strftime('%Y-%m-%d %H:%M:%S')
