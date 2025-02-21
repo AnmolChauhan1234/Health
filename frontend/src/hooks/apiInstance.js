@@ -25,52 +25,56 @@ api.interceptors.request.use(
 
 // Interceptor for response
 api.interceptors.response.use(
-  // Return successful response
-  (response) => {
-    return response;
-  },
+  // Successful response
+  (response) => response,
 
-  // Handle errors
+  // Error handling
   async (error) => {
     const originalRequest = error.config;
 
     // Handle 401 Unauthorized errors (token refresh logic)
-    if (
-      error.response.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Mark the request as retried
+
       console.log("Attempting to refresh token.");
 
       try {
-        console.log("Generating refresh token");
+        // Call the refresh token function
         const success = await refreshToken();
         if (success) {
+          // Retrieve the new token from sessionStorage
           const newToken = sessionStorage.getItem("token");
-          console.log("New token saved");
+
+          // Update the Authorization header with the new token
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+
+          // Retry the original request with the new token
           return api(originalRequest);
         } else {
-          throw new Error("Token refresh failed");
+          // Token refresh failed, clear storage and redirect to login
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/auth/register";
+          return Promise.reject(new Error("Token refresh failed"));
         }
-      } catch (error) {
-        console.error("Token Refresh failed", error);
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
 
-        // Clear storage and redirect
+        // Clear storage and redirect to login
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = "/auth/register";
+        return Promise.reject(refreshError);
       }
     }
 
-    // Allow 404 responses to pass through without being treated as errors
-    if (error.response.status === 404) {
+    // Handle 404 errors (optional)
+    if (error.response?.status === 404) {
       return Promise.resolve(error.response); // Resolve the response instead of rejecting it
     }
 
     // Reject all other errors
-    return Promise.reject(new Error(error));
+    return Promise.reject(error);
   }
 );
 

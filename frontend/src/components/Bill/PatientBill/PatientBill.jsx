@@ -26,7 +26,7 @@ function PatientBill() {
   //loading section starts here
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 w-full h-screen dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         <p className="text-gray-600 dark:text-gray-400 text-lg font-semibold">
           Loading...
@@ -39,7 +39,7 @@ function PatientBill() {
   // error section starts here
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md">
+      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md w-full h-screen">
         <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-800 rounded-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"

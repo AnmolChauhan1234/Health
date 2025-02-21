@@ -8,7 +8,7 @@ import { Modal } from "../../components";
 import { useUserContext } from "../../context/UserContext/UserContextProvider";
 
 const BillDetailsHistory = () => {
-  const { role } = useUserContext();
+  const { userRole } = useUserContext();
 
   const { billing_id } = useParams(); // Get billing_id from the URL
   const [billDetails, setBillDetails] = useState(null);
@@ -85,7 +85,7 @@ const BillDetailsHistory = () => {
 
         if (response.status === 200) {
           setBillDetails(response.data);
-          // console.log(response.data.history[0])
+          console.log("bill details", response.data.history[0])
         } else {
           setError("Failed to fetch bill details.");
         }
@@ -102,7 +102,7 @@ const BillDetailsHistory = () => {
   //loading section starts here
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 w-full h-screen dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         <p className="text-gray-600 dark:text-gray-400 text-lg font-semibold">
           Loading...
@@ -115,7 +115,7 @@ const BillDetailsHistory = () => {
   // error section starts here
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md">
+      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md w-full h-screen">
         <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-800 rounded-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -146,6 +146,8 @@ const BillDetailsHistory = () => {
   }
   // error section ends here
 
+  console.log("useState", billDetails);
+
   return (
     <>
       <Modal
@@ -159,136 +161,140 @@ const BillDetailsHistory = () => {
           Bill Details
         </h1>
 
-        {billDetails ? (
-          <div className="space-y-4">
-            {/* Summary section starts here */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Summary
-              </h2>
+        {billDetails ? 
+          (
+            <div className="space-y-4">
+              {/* Summary section starts here */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Summary
+                </h2>
 
-              {/* Billing id section starts here */}
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-semibold">Billing ID:</span>{" "}
-                {billDetails.billing_id}
-              </p>
-              {/* Billing id section ends here */}
+                {/* Billing id section starts here */}
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">Billing ID:</span>{" "}
+                  {billDetails.billing_id}
+                </p>
+                {/* Billing id section ends here */}
 
-              {/* Name section starts here */}
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-semibold">
-                  {role === "hospital" ? "Patient Name : " : "Hospital Name : "}
-                </span>{" "}
-                {/* {billDetails.history[0]?.patient || "N/A"} */}
-                {role === "hospital"
-                  ? billDetails.history[0]?.patient || "N/A"
-                  : billDetails.history[0]?.hospital || "N/A"}
-              </p>
-              {/* Name section ends here */}
+                {/* Name section starts here */}
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">
+                    {userRole === "hospital" ? "Patient Name : " : "Hospital Name : "}
+                  </span>{" "}
+                  {/* {billDetails.history[0]?.patient || "N/A"} */}
+                  {userRole === "hospital"
+                    ? billDetails.history[0]?.patient || "N/A"
+                    : billDetails.history[0]?.hospital || "N/A"}
+                </p>
+                {/* Name section ends here */}
 
-              {/* Amount section starts here */}
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-semibold">Total Amount:</span> ₹
-                {billDetails.history[0]?.total_amount.toFixed(2)}
-              </p>
-              {/* Amount section ends here */}
+                {/* Amount section starts here */}
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">Total Amount:</span> ₹
+                  {billDetails.history[0]?.total_amount.toFixed(2)}
+                </p>
+                {/* Amount section ends here */}
 
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-semibold">Status:</span>{" "}
-                <span
-                  className={`capitalize ${
-                    billDetails.history[0]?.status === "pending"
-                      ? "text-yellow-600"
-                      : "text-green-600"
-                  }`}
-                >
-                  {billDetails.history[0]?.status}
-                </span>
-              </p>
-            </div>
-            {/* Summary section ends here */}
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">Status:</span>{" "}
+                  <span
+                    className={`capitalize ${
+                      billDetails.history[0]?.status === "pending"
+                        ? "text-yellow-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    {billDetails.history[0]?.status}
+                  </span>
+                </p>
+              </div>
+              {/* Summary section ends here */}
 
-            {/* History section ,i.e , details of each facility availed starts here */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                History
-              </h2>
-              {billDetails.history.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-4"
-                >
-                  {/* Items section starts here */}
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <span className="font-semibold">Type:</span> {item.type}
-                  </p>
-                  {/* Items type section section ends here */}
-
-                  {/* Amount section starts here */}
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <span className="font-semibold">Amount:</span> ₹
-                    {item.amount.toFixed(2)}
-                  </p>
-                  {/* Amount section ends here */}
-
-                  {/* Doctor , service or treatment section starts here */}
-                  {/* if doctor */}
-                  {item.doctor && (
+              {/* History section ,i.e , details of each facility availed starts here */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  History
+                </h2>
+                {billDetails.history.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-4"
+                  >
+                    {/* Items section starts here */}
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Doctor:</span>{" "}
-                      {item.doctor}
+                      <span className="font-semibold">Type:</span> {item.type}
                     </p>
-                  )}
+                    {/* Items type section section ends here */}
 
-                  {/* if service */}
-                  {item.service && (
+                    {/* Amount section starts here */}
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Service:</span>{" "}
-                      {item.service}
+                      <span className="font-semibold">Amount:</span> ₹
+                      {item.amount.toFixed(2)}
                     </p>
-                  )}
+                    {/* Amount section ends here */}
 
-                  {/* if treatment */}
-                  {item.treatment && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Treatment:</span>{" "}
-                      {item.treatment}
-                    </p>
-                  )}
-                  {/* Doctor , service or treatment section ends here */}
+                    {/* Doctor , service or treatment section starts here */}
+                    {/* if doctor */}
+                    {item.doctor && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-semibold">Doctor:</span>{" "}
+                        {item.doctor}
+                      </p>
+                    )}
 
-                  {/* delete button section starts here */}
-                  {role === "hospital" && (
-                    <button
-                      onClick={() => handleDeleteButton(item.id)}
-                      className="cursor-pointer bg-red-500 py-1 px-2 rounded-md mt-2 hover:bg-red-600 text-white"
-                    >
-                      delete
-                    </button>
-                  )}
-                  {/* delete button section ends here */}
-                </div>
-              ))}
+                    {/* if service */}
+                    {item.service && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-semibold">Service:</span>{" "}
+                        {item.service}
+                      </p>
+                    )}
+
+                    {/* if treatment */}
+                    {item.treatment && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-semibold">Treatment:</span>{" "}
+                        {item.treatment}
+                      </p>
+                    )}
+                    {/* Doctor , service or treatment section ends here */}
+
+                    {/* delete button section starts here */}
+                    {userRole === "hospital" && (
+                      <button
+                        onClick={() => handleDeleteButton(item.id)}
+                        className="cursor-pointer bg-red-500 py-1 px-2 rounded-md mt-2 hover:bg-red-600 text-white"
+                      >
+                        delete
+                      </button>
+                    )}
+                    {/* delete button section ends here */}
+                  </div>
+                ))}
+              </div>
+
+              {/* Pay button section starts here */}
+              <div className="flex justify-center">
+                {userRole !== "hospital" && (
+                  <button
+                    onClick={() => console.log("payment page here.")}
+                    className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
+                  >
+                    Pay Now
+                  </button>
+                )}
+              </div>
+              {/* Pay button section ends here */}
+
+              {/* History section ,i.e , details of each facility availed ends here */}
             </div>
-
-            {/* Pay button section starts here */}
-            <div className="flex justify-center">
-              {role !== "hospital" && (
-                <button
-                  onClick={() => console.log("payment page here.")}
-                  className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
-                >
-                  Pay Now
-                </button>
-              )}
-            </div>
-            {/* Pay button section ends here */}
-
-            {/* History section ,i.e , details of each facility availed ends here */}
-          </div>
-        ) : (
-          <p className="text-gray-600 dark:text-gray-400">No details found.</p>
-        )}
+          ) 
+            : 
+          (
+            <p className="text-gray-600 dark:text-gray-400">No details found.</p>
+          )
+        }
       </div>
     </>
   );

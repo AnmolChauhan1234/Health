@@ -24,5 +24,11 @@ import Card from "./Card/Card";
 
 import Scene from "./ThreeDModel/Scene";
 
+//Billing and Payments.
+import BillingList from "./Bill/BillingList/BillingList";
 
-export {Header , Footer , ContentWrite , Map , Login , Signup ,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable , AddSearchBox , LocationSection , SearchBox , Card , Scene };
+import EMIInstallmentItem from "./EMIInstallmentItem/EMIInstallmentItem";
+import PaymentMethodSelector from "./PaymentMethodSelector/PaymentMethodSelector";
+import RazorpayButton from "./RazorpayButton/RazorpayButton";
+
+export {Header , Footer , ContentWrite , Map , Login , Signup ,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable , AddSearchBox , LocationSection , SearchBox , Card , Scene , BillingList , EMIInstallmentItem , PaymentMethodSelector , RazorpayButton};

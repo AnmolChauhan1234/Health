@@ -22,6 +22,9 @@ function HospitalBill() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedPatientId, setselectedPatientId] = useState();
 
+  //for add button.
+  const [isAdding, setIsAdding] = useState(false);
+
   //Modal realted states.
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setmodalMessage] = useState();
@@ -60,11 +63,14 @@ function HospitalBill() {
 
   // Handle Add Patient button click
   const handleAddButtonClick = async () => {
+    
     if (!selectedPatientId) {
       // If no patient is selected, just toggle the search bar
       setShowSearchBar((prev) => !prev);
       return;
     }
+
+    setIsAdding(true);
 
     // Call create bill API to create a bill
     const { success, message } = await createBillapi(selectedPatientId);
@@ -72,6 +78,8 @@ function HospitalBill() {
     setShowModal(true);
     setmodalMessage(message);
     setstatusCode(success ? "success" : "warning");
+    
+    setIsAdding(false);
 
     // Refetch the history if the create bill is successful
     if (success) {
@@ -79,7 +87,9 @@ function HospitalBill() {
       setSearchQuery("");
       setShowSearchBar(false);
       setselectedPatientId(null);
+      
     }
+
   };
 
   // Debounced search function
@@ -125,7 +135,7 @@ function HospitalBill() {
   //loading section starts here
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 w-full h-screen dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         <p className="text-gray-600 dark:text-gray-400 text-lg font-semibold">
           Loading...
@@ -138,7 +148,7 @@ function HospitalBill() {
   // error section starts here
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md">
+      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md w-full h-screen">
         <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-800 rounded-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -180,18 +190,22 @@ function HospitalBill() {
       <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
         {/* Add Patient button and Search bar section */}
         <div className="flex items-center justify-between mb-6">
+
           {/* Add patient button starts here */}
           <button
             onClick={handleAddButtonClick}
-            className="bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-amber-600 transition-cus cursor-pointer"
+            className={` ${isAdding ? 'bg-blue-400' : 'bg-blue-600 dark:bg-amber-500 hover:bg-blue-700 dark:hover:bg-amber-600'}  text-white px-4 py-2 rounded-md  transition-cus cursor-pointer`}
+            disabled={isAdding}
           >
-            Add Patient
+            {isAdding ? "Adding..." : "Add Patient"}
           </button>
           {/* Add patient button section ends here */}
 
           {/* Search bar  section starts here*/}
           {showSearchBar && (
             <div className="relative">
+
+              {/* search box starts here */}
               <input
                 type="text"
                 value={searchQuery}
@@ -199,6 +213,8 @@ function HospitalBill() {
                 placeholder="Search users..."
                 className="ml-4 p-2 border border-gray-400 dark:border-gray-600 rounded-sm outline-none focus:border-amber-500 dark:bg-gray-800 dark:text-white"
               />
+              {/* Search box ends here */}
+
               {/* Display search results */}
               {searchQuery && (
                 <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mt-1 shadow-lg z-10">
@@ -227,23 +243,12 @@ function HospitalBill() {
           )}
         </div>
 
-        {/* Billing List (History Of Bills) */}
+        {/* Billing List (History Of Bills) starts here*/}
         <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          
-          {/* {loading && (
-            <p className="text-gray-600 dark:text-gray-400">
-              Loading billing history...
-            </p>
-          )}
-          {error && (
-            <p className="text-red-500 dark:text-red-400">
-              Error: {error.message}
-            </p>
-          )} */}
-
           {/* Billing List Component */}
           <BillingList bills={billHistory} onSelectBill={handleBillSelect} />
         </section>
+        {/* Billing List (History Of Bills) ends here*/}
       </main>
     </>
   );

@@ -18,13 +18,13 @@ function useCreateBill () {
         id: id
       });
 
-      if (response.status === 200) {
-        setcreateBillMessage("Bill added successfully.");
+      if (response.status === 201) {
+        setcreateBillMessage("Patient added successfully.");
         setcreateBillError(false);
-        return {success: true , message: "Bill added successfully."};
+        return {success: true , message: "Patient added successfully."};
       } else {
-        setcreateBillError(response.data.detail||"could not add bill");
-        const errorMsg = response.data.detail || "could not add bill";
+        setcreateBillError(response.data.detail||"Could not add patient");
+        const errorMsg = response.data.detail || "Could not add patient";
         // console.log(response.data.detail);
         return {status: false , message: errorMsg};
       }

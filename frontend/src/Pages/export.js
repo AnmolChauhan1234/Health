@@ -14,9 +14,8 @@ import EMIPaymentPage from './EMIPaymentPage/EMIPaymentPage';
 import DirectPaymentPage from './DirectPaymentPage/DirectPaymentPage';
 import BillDetailsPage from './BillDetailsPage/BillDetailsPage';
 import AddBillPage from './AddBillPage/AddBillPage';
-import ActiveBillsPage from './ActiveBillPage/ActiveBillPage';
 
 import BillDetailsHistory from './BillDetailsHistory/BillDetailsHistory';
 
 
-export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage , DetailsView , EMIPaymentPage , DirectPaymentPage , BillDetailsPage , AddBillPage , ActiveBillsPage , BillDetailsHistory};
+export {Home, About, Profile, Register , Contact , MyAccount , Bills , History , Manage , DetailsView , EMIPaymentPage , DirectPaymentPage , BillDetailsPage , AddBillPage , BillDetailsHistory};

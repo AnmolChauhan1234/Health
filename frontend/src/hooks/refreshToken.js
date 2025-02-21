@@ -1,29 +1,31 @@
 import api from "./apiInstance";
 
 const refreshToken = async () => {
-
-  // api call to custom-refresh.
   try {
-    const response = await api.post("/accounts/custom-refresh/" , {} , {
-      withCredentials:true, 
-      //Ensuring cookies are sent with the request.
-    });
+    // Call the custom refresh endpoint
+    const response = await api.post(
+      "/accounts/custom-refresh/",
+      {},
+      {
+        withCredentials: true, // Ensure cookies are sent
+      }
+    );
 
-    if(response.status === 200){
+    if (response.status === 200) {
+      // Save the new access token to sessionStorage
       const accessToken = response.data.access;
-      sessionStorage.setItem('token', accessToken);
-      console.log(response.data.message);
-      return true;
-    } else{
-      console.log("Access token refresh failed", response.data.details);
-      return false;
+      sessionStorage.setItem("token", accessToken);
+
+      console.log("New access token issued:", response.data.message);
+      return true; // Token refresh successful
+    } else {
+      console.log("Access token refresh failed:", response.data.details);
+      return false; // Token refresh failed
     }
-
   } catch (error) {
-    console.error('Failed to generate the token.Login again.')
-    return false;
+    console.error("Failed to refresh token. Login again:", error);
+    return false; // Token refresh failed
   }
-
 };
 
 export default refreshToken;
