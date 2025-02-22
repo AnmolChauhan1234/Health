@@ -236,7 +236,7 @@ class ShowHospitalDetails(APIView):
             # service = get_object_or_404(Service, name = search_term)
             service = Service.objects.filter(name=search_term).first()
             
-            if not service.exists():
+            if not service:
                 return Response({"error": "Service not found"}, status=404)
             
             print("5")
