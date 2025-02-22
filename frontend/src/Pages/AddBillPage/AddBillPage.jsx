@@ -99,9 +99,11 @@ function AddBillPage({ onAddBill }) {
     setShowDoctorDropdown(false);
 
     const { success, message } = await addBillApi(billId, doctor.id, "doctor");
-    setShowModal(true);
-    setModalMessage(message);
-    setStatusCode(success ? "info" : "warning");
+    if(!success){
+      setShowModal(true);
+      setModalMessage(message);
+      setStatusCode("warning");
+    }
   };
 
   const handleSelectService = async (service) => {
@@ -110,9 +112,11 @@ function AddBillPage({ onAddBill }) {
     setShowServiceDropdown(false);
 
     const { success, message } = await addBillApi(billId, service.id, "service");
-    setShowModal(true);
-    setModalMessage(message);
-    setStatusCode(success ? "info" : "warning");
+    if(!success){
+      setShowModal(true);
+      setModalMessage(message);
+      setStatusCode("warning");
+    }
   };
 
   const handleSelectTreatment = async (treatment) => {
@@ -121,9 +125,12 @@ function AddBillPage({ onAddBill }) {
     setShowTreatmentDropdown(false);
 
     const { success, message } = await addBillApi(billId, treatment.id, "treatment");
-    setShowModal(true);
-    setModalMessage(message);
-    setStatusCode(success ? "info" : "warning");
+    if(!success){
+      setShowModal(true);
+      setModalMessage(message);
+      setStatusCode("warning");
+    }
+    
   };
 
   // Handle form submission
@@ -345,27 +352,31 @@ function AddBillPage({ onAddBill }) {
           {/* Treatment Search and addition section starts here*/}
           <div>
             <label 
-              className="block text-sm font-medium mb-1 dark:text-white"
+              className="block text-sm sm:text-lg ubuntu-medium mb-1 dark:text-white"
               htmlFor="treatment"
             >
               Treatments
             </label>
+
+            {/* displayin already added ones */}
             {treatments.map((treatment, index) => (
               <input
                 key={treatment.id}
                 type="text"
                 name="treatment"
                 value={treatment.name}
-                className="w-full px-3 py-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 mb-2 dark:text-gray-200"
+                className="w-full px-3 py-2 border-[1px] border-green-500 rounded dark:bg-gray-700 mb-2 dark:text-gray-200"
                 readOnly
               />
             ))}
+
+            {/* input section starts here */}
             <input
               type="text"
               value={treatmentSearchQuery}
               onChange={handleTreatmentSearchChange}
               placeholder="Search treatments ..."
-              className="w-full px-3 py-2 border outline-none rounded border-amber-200 focus:border-amber-400 dark:text-gray-200 dark:placeholder:text-gray-400"
+              className="w-full px-3 py-2 border outline-none rounded border-amber-200 focus:border-amber-400 dark:text-gray-200 dark:placeholder:text-gray-400 "
             />
             {showTreatmentDropdown && treatmentSearchQuery && (
               <div className="mt-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg dark:shadow-gray-600 z-10 treatment-dropdown">
@@ -378,7 +389,7 @@ function AddBillPage({ onAddBill }) {
                     <div
                       key={treatment.id}
                       onClick={() => handleSelectTreatment(treatment)}
-                      className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-cus"
+                      className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-cus dark:text-gray-200"
                     >
                       {treatment.name} - ₹{treatment.cost}
                     </div>
@@ -401,16 +412,17 @@ function AddBillPage({ onAddBill }) {
           {/* Treatment Search and addition section ends here*/}
 
           {/* Submit Button section starts here*/}
-          <div className="flex justify-end">
+          <div className="flex w-full items-center justify-center">
             <button
               type="button"
               onClick={handleSubmit}
-              className="px-6 py-2 bg-blue-500 dark:bg-amber-500 text-white ubuntu-bold-italic rounded hover:bg-blue-600 dark:hover:bg-amber-600 transition-cus cursor-pointer"
+              className="px-6 py-2 bg-blue-500 dark:bg-amber-500 text-white ubuntu-bold-italic rounded hover:bg-blue-600 dark:hover:bg-amber-600 transition-cus cursor-pointer w-[70%] mb-3"
             >
-              Submit Bill
+              Add Bills
             </button>
           </div>
           {/* Submit Button section ends here */}
+
         </form>
       </div>
     </>

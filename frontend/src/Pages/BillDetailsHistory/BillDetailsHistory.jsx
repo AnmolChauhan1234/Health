@@ -15,6 +15,9 @@ const BillDetailsHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //deleting
+  // const [isDeleting, setisDeleting] = useState(false);
+
   //Modal related states
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setmodalMessage] = useState();
@@ -28,10 +31,34 @@ const BillDetailsHistory = () => {
   //useDeleteBill detail destructure here.
   const { deleteBillDetail, isDeleting } = useDeleteBillDetail();
 
+  // Fetch bill details
+  const fetchBillDetails = async () => {
+    try {
+      const response = await api.get(`/history/history-show-bill-details/`, {
+        params: {
+          id: billing_id,
+        },
+      });
+
+      if (response.status === 200) {
+        setBillDetails(response.data);
+      } else {
+        setError("Failed to fetch bill details.");
+      }
+    } catch (error) {
+      setError(error.message || "An error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //handle delete functionality
   const handleDeleteButton = async (id) => {
-    console.log(id);
-    const { success, message } = deleteBillDetail(id);
+    // setisDeleting(true);
+    // console.log(id);
+    const { success, message } = await deleteBillDetail(id);
+
+    // console.log("bil details", message);
 
     setShowModal(true);
     setmodalMessage(message);
@@ -39,62 +66,63 @@ const BillDetailsHistory = () => {
 
     //refetch the bill details page if success in deleting bill
     if (success) {
-      const fetchBillDetails = async () => {
-        try {
-          const response = await api.get(
-            `/history/history-show-bill-details/`,
-            {
-              params: {
-                id: billing_id,
-              },
-            }
-          );
+      // const fetchBillDetails = async () => {
+      //   try {
+      //     const response = await api.get(
+      //       `/history/history-show-bill-details/`,
+      //       {
+      //         params: {
+      //           id: billing_id,
+      //         },
+      //       }
+      //     );
 
-          if (response.status === 200) {
-            setBillDetails(response.data);
-            // console.log(response.data.history[0])
-          } else {
-            setShowModal(true);
-            setmodalMessage("Failed to fetch bill details.");
-            setstatusCode("error");
-            setError("Failed to fetch bill details.");
-          }
-        } catch (error) {
-          setShowModal(true);
-          setmodalMessage("An error occurred.");
-          setstatusCode("error");
-          setError(error.message || "An error occurred.");
-        } finally {
-          setLoading(false);
-        }
-      };
+      //     if (response.status === 200) {
+      //       setBillDetails(response.data);
+      //       // console.log(response.data.history[0])
+      //     } else {
+      //       setShowModal(true);
+      //       setmodalMessage("Failed to fetch bill details.");
+      //       setstatusCode("error");
+      //       setError("Failed to fetch bill details.");
+      //     }
+      //   } catch (error) {
+      //     setShowModal(true);
+      //     setmodalMessage("An error occurred.");
+      //     setstatusCode("error");
+      //     setError(error.message || "An error occurred.");
+      //   } finally {
+      //     setLoading(false);
+      //   }
+      // };
 
-      fetchBillDetails();
+      await fetchBillDetails();
     }
+    // setisDeleting(false);
   };
 
   // Fetch bill details when the component mounts
   useEffect(() => {
-    const fetchBillDetails = async () => {
-      try {
-        const response = await api.get(`/history/history-show-bill-details/`, {
-          params: {
-            id: billing_id,
-          },
-        });
+    // const fetchBillDetails = async () => {
+    //   try {
+    //     const response = await api.get(`/history/history-show-bill-details/`, {
+    //       params: {
+    //         id: billing_id,
+    //       },
+    //     });
 
-        if (response.status === 200) {
-          setBillDetails(response.data);
-          console.log("bill details", response.data.history[0])
-        } else {
-          setError("Failed to fetch bill details.");
-        }
-      } catch (error) {
-        setError(error.message || "An error occurred.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     if (response.status === 200) {
+    //       setBillDetails(response.data);
+    //       // console.log("bill details", response.data.history[0])
+    //     } else {
+    //       setError("Failed to fetch bill details.");
+    //     }
+    //   } catch (error) {
+    //     setError(error.message || "An error occurred.");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
     fetchBillDetails();
   }, [billing_id]);
@@ -146,7 +174,7 @@ const BillDetailsHistory = () => {
   }
   // error section ends here
 
-  console.log("useState", billDetails);
+  // console.log("useState", billDetails);
 
   return (
     <>
@@ -161,140 +189,143 @@ const BillDetailsHistory = () => {
           Bill Details
         </h1>
 
-        {billDetails ? 
-          (
-            <div className="space-y-4">
-              {/* Summary section starts here */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  Summary
-                </h2>
+        {billDetails ? (
+          <div className="space-y-4">
+            {/* Summary section starts here */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Summary
+              </h2>
 
-                {/* Billing id section starts here */}
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">Billing ID:</span>{" "}
-                  {billDetails.billing_id}
-                </p>
-                {/* Billing id section ends here */}
+              {/* Billing id section starts here */}
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-semibold">Billing ID:</span>{" "}
+                {billDetails.billing_id}
+              </p>
+              {/* Billing id section ends here */}
 
-                {/* Name section starts here */}
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">
-                    {userRole === "hospital" ? "Patient Name : " : "Hospital Name : "}
-                  </span>{" "}
-                  {/* {billDetails.history[0]?.patient || "N/A"} */}
+              {/* Name section starts here */}
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-semibold">
                   {userRole === "hospital"
-                    ? billDetails.history[0]?.patient || "N/A"
-                    : billDetails.history[0]?.hospital || "N/A"}
-                </p>
-                {/* Name section ends here */}
+                    ? "Patient Name : "
+                    : "Hospital Name : "}
+                </span>{" "}
+                {/* {billDetails.history[0]?.patient || "N/A"} */}
+                {userRole === "hospital"
+                  ? billDetails.history[0]?.patient || "N/A"
+                  : billDetails.history[0]?.hospital || "N/A"}
+              </p>
+              {/* Name section ends here */}
 
-                {/* Amount section starts here */}
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">Total Amount:</span> ₹
-                  {billDetails.history[0]?.total_amount.toFixed(2)}
-                </p>
-                {/* Amount section ends here */}
+              {/* Amount section starts here */}
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-semibold">Total Amount:</span> ₹
+                {billDetails.history[0]?.total_amount.toFixed(2)}
+              </p>
+              {/* Amount section ends here */}
 
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">Status:</span>{" "}
-                  <span
-                    className={`capitalize ${
-                      billDetails.history[0]?.status === "pending"
-                        ? "text-yellow-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    {billDetails.history[0]?.status}
-                  </span>
-                </p>
-              </div>
-              {/* Summary section ends here */}
-
-              {/* History section ,i.e , details of each facility availed starts here */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  History
-                </h2>
-                {billDetails.history.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-4"
-                  >
-                    {/* Items section starts here */}
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Type:</span> {item.type}
-                    </p>
-                    {/* Items type section section ends here */}
-
-                    {/* Amount section starts here */}
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Amount:</span> ₹
-                      {item.amount.toFixed(2)}
-                    </p>
-                    {/* Amount section ends here */}
-
-                    {/* Doctor , service or treatment section starts here */}
-                    {/* if doctor */}
-                    {item.doctor && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        <span className="font-semibold">Doctor:</span>{" "}
-                        {item.doctor}
-                      </p>
-                    )}
-
-                    {/* if service */}
-                    {item.service && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        <span className="font-semibold">Service:</span>{" "}
-                        {item.service}
-                      </p>
-                    )}
-
-                    {/* if treatment */}
-                    {item.treatment && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        <span className="font-semibold">Treatment:</span>{" "}
-                        {item.treatment}
-                      </p>
-                    )}
-                    {/* Doctor , service or treatment section ends here */}
-
-                    {/* delete button section starts here */}
-                    {userRole === "hospital" && (
-                      <button
-                        onClick={() => handleDeleteButton(item.id)}
-                        className="cursor-pointer bg-red-500 py-1 px-2 rounded-md mt-2 hover:bg-red-600 text-white"
-                      >
-                        delete
-                      </button>
-                    )}
-                    {/* delete button section ends here */}
-                  </div>
-                ))}
-              </div>
-
-              {/* Pay button section starts here */}
-              <div className="flex justify-center">
-                {userRole !== "hospital" && (
-                  <button
-                    onClick={() => console.log("payment page here.")}
-                    className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
-                  >
-                    Pay Now
-                  </button>
-                )}
-              </div>
-              {/* Pay button section ends here */}
-
-              {/* History section ,i.e , details of each facility availed ends here */}
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-semibold">Status:</span>{" "}
+                <span
+                  className={`capitalize ${
+                    billDetails.history[0]?.status === "pending"
+                      ? "text-yellow-600"
+                      : "text-green-600"
+                  }`}
+                >
+                  {billDetails.history[0]?.status}
+                </span>
+              </p>
             </div>
-          ) 
-            : 
-          (
-            <p className="text-gray-600 dark:text-gray-400">No details found.</p>
-          )
-        }
+            {/* Summary section ends here */}
+
+            {/* History section ,i.e , details of each facility availed starts here */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                History
+              </h2>
+              {billDetails.history.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-4"
+                >
+                  {/* Items section starts here */}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold">Type:</span> {item.type}
+                  </p>
+                  {/* Items type section section ends here */}
+
+                  {/* Amount section starts here */}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold">Amount:</span> ₹
+                    {item.amount.toFixed(2)}
+                  </p>
+                  {/* Amount section ends here */}
+
+                  {/* Doctor , service or treatment section starts here */}
+                  {/* if doctor */}
+                  {item.doctor && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-semibold">Doctor:</span>{" "}
+                      {item.doctor}
+                    </p>
+                  )}
+
+                  {/* if service */}
+                  {item.service && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-semibold">Service:</span>{" "}
+                      {item.service}
+                    </p>
+                  )}
+
+                  {/* if treatment */}
+                  {item.treatment && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-semibold">Treatment:</span>{" "}
+                      {item.treatment}
+                    </p>
+                  )}
+                  {/* Doctor , service or treatment section ends here */}
+
+                  {/* delete button section starts here */}
+                  {userRole === "hospital" && (
+                    <button
+                      onClick={() => handleDeleteButton(item.id)}
+                      className={`cursor-pointer ${
+                        isDeleting(item.id)
+                          ? "bg-red-400"
+                          : "bg-red-500 hover:bg-red-600"
+                      } py-1 px-2 rounded-md mt-2 text-white`}
+                      disabled={isDeleting(item.id)}
+                    >
+                      {isDeleting(item.id) ? "Deleting..." : "Delete"}
+                    </button>
+                  )}
+                  {/* delete button section ends here */}
+                </div>
+              ))}
+            </div>
+
+            {/* Pay button section starts here */}
+            <div className="flex justify-center">
+              {userRole !== "hospital" && (
+                <button
+                  onClick={() => console.log("payment page here.")}
+                  className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
+                >
+                  Pay Now
+                </button>
+              )}
+            </div>
+            {/* Pay button section ends here */}
+
+            {/* History section ,i.e , details of each facility availed ends here */}
+          </div>
+        ) : (
+          <p className="text-gray-600 dark:text-gray-400">No details found.</p>
+        )}
       </div>
     </>
   );

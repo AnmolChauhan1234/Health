@@ -15,9 +15,9 @@ function getLocationResult() {
     setmsg(null);
 
     try {
-      const endp = `/search-api/get-nearby-hospitals/?lat=28.5672&lng=77.21&search=${searchQuery}&search_type=${filterType}`;
-      // const endp = `/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}&search=${searchQuery}&search_type=${filterType}`;
-      console.log("api call to ", endp);
+      // const endp = `/search-api/get-nearby-hospitals/?lat=28.5672&lng=77.21&search=${searchQuery}&search_type=${filterType}`;
+      const endp = `/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}&search=${searchQuery}&search_type=${filterType}`;
+      // console.log("api call to ", endp);
 
       // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
 
@@ -32,18 +32,21 @@ function getLocationResult() {
       const response =await api.get(endp);
 
       if (response.status === 200) {
-        setData(response.data); // Set the data if hospitals are found
-        console.log("Response received:", response.data);
+        // Set the data if hospitals are found
+        setData(response.data); 
+        setmsg(response.data.msg);
+        // console.log("Response received:", response.data);
       } else if (response.status === 404) {
 
         // Handle the case where no hospitals are found
-        console.log(response.data.message)
+        // console.log(response.data.message)
         setData([]); // Clear the data
         setmsg(response.data.message);
 
       } else {
         // Handle other unexpected status codes
-        setError("Unexpected response from the server");
+        setError(response.data.error || "Unexpected response from the server");
+        setmsg(response.data.msg);
       }
     } catch (error) {
       console.log("error")
