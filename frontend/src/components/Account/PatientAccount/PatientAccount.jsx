@@ -256,7 +256,7 @@ function PatientAccount() {
         <div className="flex justify-end mb-4">
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+            className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 cursor-pointer"
           >
             {isEditing ? "Cancel Editing" : "Edit Profile"}
           </button>
@@ -297,7 +297,7 @@ function PatientAccount() {
           <button
             type="submit"
             disabled={isUpdating || !isEditing}
-            className="w-full bg-amber-500 text-white py-2 rounded mt-4 hover:bg-amber-600 disabled:bg-gray-400"
+            className="w-full bg-amber-500 text-white py-2 rounded mt-4 hover:bg-amber-600 disabled:bg-gray-400 cursor-pointer"
           >
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>
