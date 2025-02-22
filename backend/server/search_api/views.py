@@ -234,7 +234,8 @@ class ShowHospitalDetails(APIView):
         elif search_type == "service":
             print("4")
             # service = get_object_or_404(Service, name = search_term)
-            service = Service.objects.filter(name=search_term).first()
+            service = Service.objects.filter(name=search_term).first() # because by mistake some services with same names exists in database
+            # thats why first is used here
             
             if not service:
                 return Response({"error": "Service not found"}, status=404)
