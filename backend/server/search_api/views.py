@@ -123,10 +123,12 @@ class NearbyHospitalsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        print("API hit")  # Debugging statement
         try:
             latitude = float(request.GET.get("lat"))
             longitude = float(request.GET.get("lng"))
-            radius = 10000  # 10 km
+            print(f"Received lat: {latitude}, lng: {longitude}")  # Debugging
+            radius = 60000  # 10 km
             search = request.GET.get("search", "").strip()
             search_type = request.GET.get("search_type", "").strip()
 
@@ -143,7 +145,9 @@ class NearbyHospitalsView(APIView):
 
             with connection.cursor() as cursor:
                 cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])
-                nearby_hospitals = cursor.fetchall()  
+                print(longitude, latitude, longitude, latitude, radius)
+                nearby_hospitals = cursor.fetchall()
+                print("ok")
 
             if not nearby_hospitals:
                 return Response({"message": "No nearby hospitals found"}, status=status.HTTP_404_NOT_FOUND)
@@ -178,7 +182,7 @@ class NearbyHospitalsView(APIView):
             # Step 3: Prepare the response
             results = [
                 {
-                    "id": hospital.user.id,
+                    "id": hospital.id,
                     "name": hospital.user.full_name,
                     "profile_picture": hospital.user.profile_picture,
                     "latitude": hospital.latitude,
@@ -207,8 +211,11 @@ class ShowHospitalDetails(APIView):
         search_term = request.GET.get("search", "")
 
 
+        print("1")
         hospital = get_object_or_404(Hospital, id=hospital_id)
+        print("2")
         user = get_object_or_404(User, hospital=hospital)
+        print("3")
 
         if search_type == "doctor":
             doctor = get_object_or_404(Doctor, doctor_name = search_term)
@@ -225,9 +232,16 @@ class ShowHospitalDetails(APIView):
 
 
         elif search_type == "service":
-            service = get_object_or_404(Service, name = search_term)
+            print("4")
+            # service = get_object_or_404(Service, name = search_term)
+            service = Service.objects.filter(name=search_term).first()
+            
+            if not service.exists():
+                return Response({"error": "Service not found"}, status=404)
+            
+            print("5")
             hospital_service = get_object_or_404(HospitalService, service=service, hospital=hospital)
-
+            print("6")
             facility = {
                 "name": service.name,
                 "cost": hospital_service.cost,
