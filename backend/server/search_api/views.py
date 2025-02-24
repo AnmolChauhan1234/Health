@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import requests
 from accounts.models import Hospital
 from rest_framework import generics, permissions
 from rest_framework.response import Response
@@ -174,9 +175,33 @@ class NearbyHospitalsView(APIView):
                     .annotate(min_cost=Min("hospitaltreatment__cost")) \
                     .order_by("min_cost")
 
+            # elif search_type == "symptom":
+            #     hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
+            #         .annotate(min_cost=Min("hospitaltreatment__cost")) \
+            #         .order_by("min_cost")
+
+
             elif search_type == "symptom":
-                hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
-                    .annotate(min_cost=Min("hospitaltreatment__cost")) \
+                # Step 2.1: Call ML Model
+                ml_url = "http://127.0.0.1:8000/ml_app/predict/"  # Update with actual ML model endpoint
+                ml_response = requests.post(ml_url, json={
+                    "search_type": "symptom",
+                    "lat": latitude,
+                    "lng": longitude,
+                    "search": search
+                })
+
+                if ml_response.status_code != 200:
+                    return Response({"error": "ML model failed to predict specialization"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                prediction = ml_response.json().get("prediction", [])  # Get predicted specializations
+
+                if not prediction:
+                    return Response({"message": "No matching specializations found"}, status=status.HTTP_404_NOT_FOUND)
+
+                # Step 2.2: Filter hospitals with the predicted specializations
+                hospitals = hospitals.filter(hospitaldoctor__doctor__specialization__in=prediction) \
+                    .annotate(min_cost=Min("hospitaldoctor__appointment_fees_in_hospital")) \
                     .order_by("min_cost")
 
             # Step 3: Prepare the response
@@ -259,6 +284,20 @@ class ShowHospitalDetails(APIView):
                 "cost": hospital_treatment.cost,
                 "doctor_required": hospital_treatment.doctor_required,
             }
+
+        elif search_type == "symptom":
+            hospital_doctors = HospitalDoctor.objects.filter(specialization_in_hospital=search_term, hospital=hospital)
+
+            facility = []
+            for hospital_doctor in hospital_doctors:
+                facility.append({
+            "doctor_name": hospital_doctor.doctor.doctor_name,  # Assuming ForeignKey relation to Doctor
+            "doctor_image": hospital_doctor.doctor.doctor_image,
+            "appointment_fees_in_hospital": hospital_doctor.appointment_fees_in_hospital,
+            "specialization_in_hospital": hospital_doctor.specialization_in_hospital,
+            "consultation_days": hospital_doctor.consultation_days,
+            "availability_in_hospital": hospital_doctor.availability_in_hospital,
+        })
 
         result = {
             "userProfile": {

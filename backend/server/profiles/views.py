@@ -152,3 +152,13 @@ class ResetPasswordView(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ShowProfilePictureView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile_picture = user.profile_picture or None
+
+        return Response({"profile_picture": profile_picture}, status=status.HTTP_200_OK)
