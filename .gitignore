@@ -8,11 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Node.js Dependencies
-node_modules/
-dist/
-dist-ssr/
-*.local
-.vite/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.vite/
 
 # Editor & System Files
 .vscode/
@@ -34,18 +34,18 @@ __pycache__/
 *$py.class
 
 # Virtual Environment
-.venv/
-venv/
+backend/.venv/
+backend/venv/
 
 # Django-specific ignores
-db.sqlite3
-db.sqlite3-journal
-local_settings.py
-media/
-staticfiles/
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/local_settings.py
+backend/media/
+backend/staticfiles/
 
 # Backend-specific directories
-management/
+backend/management/
 
 # Mac & Linux
 *.swp
