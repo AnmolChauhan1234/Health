@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import requests
 from accounts.models import Hospital
 from rest_framework import generics, permissions
 from rest_framework.response import Response
@@ -123,10 +124,12 @@ class NearbyHospitalsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        print("API hit")  # Debugging statement
         try:
             latitude = float(request.GET.get("lat"))
             longitude = float(request.GET.get("lng"))
-            radius = 10000  # 10 km
+            print(f"Received lat: {latitude}, lng: {longitude}")  # Debugging
+            radius = 60000  # 10 km
             search = request.GET.get("search", "").strip()
             search_type = request.GET.get("search_type", "").strip()
 
@@ -143,7 +146,9 @@ class NearbyHospitalsView(APIView):
 
             with connection.cursor() as cursor:
                 cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])
-                nearby_hospitals = cursor.fetchall()  
+                print(longitude, latitude, longitude, latitude, radius)
+                nearby_hospitals = cursor.fetchall()
+                print("ok")
 
             if not nearby_hospitals:
                 return Response({"message": "No nearby hospitals found"}, status=status.HTTP_404_NOT_FOUND)
@@ -170,16 +175,41 @@ class NearbyHospitalsView(APIView):
                     .annotate(min_cost=Min("hospitaltreatment__cost")) \
                     .order_by("min_cost")
 
+            # elif search_type == "symptom":
+            #     hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
+            #         .annotate(min_cost=Min("hospitaltreatment__cost")) \
+            #         .order_by("min_cost")
+
+
             elif search_type == "symptom":
-                hospitals = hospitals.filter(hospitaltreatment__treatment__symptoms__icontains=search) \
-                    .annotate(min_cost=Min("hospitaltreatment__cost")) \
+                # Step 2.1: Call ML Model
+                ml_url = "http://127.0.0.1:8000/ml_app/predict/"  # Update with actual ML model endpoint
+                ml_response = requests.post(ml_url, json={
+                    "search_type": "symptom",
+                    "lat": latitude,
+                    "lng": longitude,
+                    "search": search
+                })
+
+                if ml_response.status_code != 200:
+                    return Response({"error": "ML model failed to predict specialization"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                prediction = ml_response.json().get("prediction", [])  # Get predicted specializations
+
+                if not prediction:
+                    return Response({"message": "No matching specializations found"}, status=status.HTTP_404_NOT_FOUND)
+
+                # Step 2.2: Filter hospitals with the predicted specializations
+                hospitals = hospitals.filter(hospitaldoctor__doctor__specialization__in=prediction) \
+                    .annotate(min_cost=Min("hospitaldoctor__appointment_fees_in_hospital")) \
                     .order_by("min_cost")
 
             # Step 3: Prepare the response
             results = [
                 {
-                    "id": hospital.user.id,
+                    "id": hospital.id,
                     "name": hospital.user.full_name,
+                    "profile_picture": hospital.user.profile_picture,
                     "latitude": hospital.latitude,
                     "longitude": hospital.longitude,
                     "distance": round(hospital_distance_map[hospital.id], 2),  # Attach SQL distance
@@ -206,8 +236,11 @@ class ShowHospitalDetails(APIView):
         search_term = request.GET.get("search", "")
 
 
+        print("1")
         hospital = get_object_or_404(Hospital, id=hospital_id)
+        print("2")
         user = get_object_or_404(User, hospital=hospital)
+        print("3")
 
         if search_type == "doctor":
             doctor = get_object_or_404(Doctor, doctor_name = search_term)
@@ -224,9 +257,17 @@ class ShowHospitalDetails(APIView):
 
 
         elif search_type == "service":
-            service = get_object_or_404(Service, name = search_term)
+            print("4")
+            # service = get_object_or_404(Service, name = search_term)
+            service = Service.objects.filter(name=search_term).first() # because by mistake some services with same names exists in database
+            # thats why first is used here
+            
+            if not service:
+                return Response({"error": "Service not found"}, status=404)
+            
+            print("5")
             hospital_service = get_object_or_404(HospitalService, service=service, hospital=hospital)
-
+            print("6")
             facility = {
                 "name": service.name,
                 "cost": hospital_service.cost,
@@ -243,6 +284,20 @@ class ShowHospitalDetails(APIView):
                 "cost": hospital_treatment.cost,
                 "doctor_required": hospital_treatment.doctor_required,
             }
+
+        elif search_type == "symptom":
+            hospital_doctors = HospitalDoctor.objects.filter(specialization_in_hospital=search_term, hospital=hospital)
+
+            facility = []
+            for hospital_doctor in hospital_doctors:
+                facility.append({
+            "doctor_name": hospital_doctor.doctor.doctor_name,  # Assuming ForeignKey relation to Doctor
+            "doctor_image": hospital_doctor.doctor.doctor_image,
+            "appointment_fees_in_hospital": hospital_doctor.appointment_fees_in_hospital,
+            "specialization_in_hospital": hospital_doctor.specialization_in_hospital,
+            "consultation_days": hospital_doctor.consultation_days,
+            "availability_in_hospital": hospital_doctor.availability_in_hospital,
+        })
 
         result = {
             "userProfile": {

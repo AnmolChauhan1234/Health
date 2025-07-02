@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-// import Login from '../../components/Login/Login'
-// import Signup from '../../components/Signup/Singup'
-import { ThreeDModel , Login , Signup } from '../../components';
+import { Scene , Login , Signup } from '../../components';
 
 function Register() {
 
@@ -20,13 +18,15 @@ function Register() {
 
   return (
     <main 
-      className='w-full bg-white dark:bg-gray-900 text-black dark:text-white px-0.5 py-2 grid grid-cols-1 md:grid-cols-2'
+      className='w-full bg-white dark:bg-gray-900 text-black dark:text-white px-0.5 py-2 grid grid-cols-1 md:grid-cols-2 border border-black min-h-[70vh]'
     >
       {/* Model block starts here */}
-      <section 
-        className='hidden md:block my-auto'
-      >
-        <ThreeDModel />
+      <section className='hidden md:flex my-auto h-full w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-2xl overflow-hidden'>
+        <div 
+          style={{ width: '100%', position: 'relative' }}
+        >
+          <Scene />
+        </div>
       </section>
       {/* Model block ends here */}
 

@@ -4,7 +4,6 @@ import ContentWrite from "./ContentWrite/ContentWrite";
 import Map from "./Map/Map";
 import Login from "./Login/Login";
 import Signup from "./Signup/Signup";
-import ThreeDModel from "./ThreeDModel/ThreeDModel";
 
 import HospitalDashboard from "./Dashboard/HospitalDashboard/HospitalDashboard";
 import HospitalAccount from "./Account/HospitalAccount/HospitalAccount";
@@ -23,4 +22,13 @@ import LocationSection from "./LocationSection/LocationSection";
 import SearchBox from "./SearchBox/SearchBox";
 import Card from "./Card/Card";
 
-export {Header , Footer , ContentWrite , Map , Login , Signup , ThreeDModel,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable , AddSearchBox , LocationSection , SearchBox , Card };
+import Scene from "./ThreeDModel/Scene";
+
+//Billing and Payments.
+import BillingList from "./Bill/BillingList/BillingList";
+
+import EMIInstallmentItem from "./EMIInstallmentItem/EMIInstallmentItem";
+import PaymentMethodSelector from "./PaymentMethodSelector/PaymentMethodSelector";
+import RazorpayButton from "./RazorpayButton/RazorpayButton";
+
+export {Header , Footer , ContentWrite , Map , Login , Signup ,PatientDashboard, HospitalDashboard , HospitalAccount , PatientAccount , HospitalBill , PatientBill , HospitalHistory , PatientHistory , Modal,DataTable , AddSearchBox , LocationSection , SearchBox , Card , Scene , BillingList , EMIInstallmentItem , PaymentMethodSelector , RazorpayButton};

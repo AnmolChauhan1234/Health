@@ -1,236 +1,8 @@
-// import React, { useState, useEffect } from "react";
-// import { Map, LocationSection, SearchBox, Card } from "../../components/index";
-// import { useMenuContext } from "../../context/MenuContext/MenuContextProvider";
-// import { useDarkMode } from "../../context/ThemeContext/ThemeContextProvider";
-// import {getLocationResult} from "../../hooks/search/export";
-
-// function Home() {
-//   const { isOpen } = useMenuContext();
-//   const { darkMode } = useDarkMode();
-
-//   // Extract API functions
-//   const { data, loading, error, fetchLocationResults } = getLocationResult();
-
-//   const [showMap, setShowMap] = useState(() => {
-//     const storedMapStatus = localStorage.getItem("showmap");
-//     return storedMapStatus === "true";
-//   });
-
-//   const [mapPosition, setMapPosition] = useState(null); // Holds map position
-//   const [results, setResults] = useState([]); // Holds search results
-
-//   useEffect(() => {
-//     localStorage.setItem("showmap", showMap);
-//   }, [showMap]);
-
-//   // Handle location updates from LocationSection
-//   const handleLocationChange = (location) => {
-//     setMapPosition(location);
-//     fetchLocationResults(location.lat, location.lng);
-//   };
-
-//   // Update results when data from API is received
-//   useEffect(() => {
-//     if (data) {
-//       // console.log("useEffect HOme data" ,data)
-//       setResults(data); // Store API results
-//     }
-//   }, [data]);
-
-//   const handleSearchResult = (location) => {
-//     console.log("serach result from home.jsx" , location)
-//   }
-
-//   return (
-//     <main className="h-max w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col pt-3 transition-cus">
-//       {/* Search & Location Section */}
-//       <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-4 w-full px-4">
-//         <LocationSection
-//           onLocationChange={handleLocationChange} // Sends location to Map and API
-//           onSearch={handleSearchResult}
-//           className="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-auto"
-//         />
-//         <SearchBox className="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-auto" />
-//       </div>
-
-//       {/* Map Section */}
-//       {!isOpen && showMap && (
-//         <section className="h-max w-full">
-//           <Map isDarkMode={darkMode} position={mapPosition} />
-//         </section>
-//       )}
-
-//       {/* Search Results Section */}
-//       <section className="p-4">
-//         <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-//           Search Results
-//         </h2>
-//         {loading && <p>Loading hospitals...</p>}
-//         {error && <p className="text-red-500">Error: {error.message}</p>}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-//           {results.map((result, index) => (
-//             <Card key={index} data={result} />
-//           ))}
-//         </div>
-//       </section>
-//     </main>
-//   );
-// }
-
-// export default Home;
-
-// import React, { useState, useEffect } from "react";
-// import { Map, LocationSection, SearchBox, Card } from "../../components/index";
-// import { useMenuContext } from "../../context/MenuContext/MenuContextProvider";
-// import { useDarkMode } from "../../context/ThemeContext/ThemeContextProvider";
-// import { getLocationResult } from "../../hooks/search/export";
-
-// function Home() {
-
-//   //getting data from contexts.
-//   const { isOpen } = useMenuContext();
-//   const { darkMode } = useDarkMode();
-
-//   // Extract API functions of getLocationResult. where i send lat, lng, searchQuery, filterType.
-//   const { data, loading, error, fetchLocationResults } = getLocationResult();
-
-//   const [showMap, setShowMap] = useState(() => {
-//     const storedMapStatus = localStorage.getItem("showmap");
-//     return storedMapStatus === "true";
-//   });
-
-//   // Holds map position
-//   const [mapPosition, setMapPosition] = useState(null);
-
-//    // Holds search results
-//   const [results, setResults] = useState([]);
-
-//    // Holds search query
-//   const [searchQuery, setSearchQuery] = useState("");
-
-//    // Holds filter type
-//   const [filterType, setFilterType] = useState("doctors");
-
-//   useEffect(() => {
-//     localStorage.setItem("showmap", showMap);
-//   }, [showMap]);
-
-//   // Handle location updates from LocationSection
-//   const handleLocationChange = (location) => {
-//     setMapPosition(location);
-//   };
-
-//   // Handle search query change
-//   const handleSearchQueryChange = (query) => {
-//     setSearchQuery(query);
-//   };
-
-//   // Handle filter type change
-//   const handleFilterTypeChange = (type) => {
-//     setFilterType(type);
-//   };
-
-//   // Handle search button click
-//   const handleSearch = () => {
-//     if (mapPosition) {
-
-//       // calling api.
-//       fetchLocationResults(
-//         mapPosition.lat,
-//         mapPosition.lng,
-//         searchQuery,
-//         filterType
-//       );
-//       // fetchLocationResults(
-//       //   mapPosition.lat,
-//       //   mapPosition.lng,
-//       //   // searchQuery,
-//       //   // filterType
-//       // );
-
-//       console.log("search for :" ,mapPosition.lat,mapPosition.lng,searchQuery,filterType )
-
-//       //setting the search box to null.
-//       // setSearchQuery('');
-//     }
-//   };
-
-//   // Update results when data from API is received
-//   useEffect(() => {
-//     if (data) {
-//       console.log("home.jsx",data);
-//       setResults(data); // Store API results
-//     }
-//   }, [data]);
-
-//   return (
-//     <main className="h-max w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col pt-3 transition-cus">
-
-//       {/* Search, Location and button Section starts here*/}
-//       <div className="flex flex-col md:flex-row gap-y-1 items-center sm:justify-center w-full px-4 py-3 md:gap-x-2">
-
-//         {/* Location Section starts here */}
-//         <LocationSection
-//           onLocationChange={handleLocationChange} // Sends location to Map and API
-//           className="border border-gray-300 rounded-lg w-full sm:w-auto"
-//         />
-//         {/* Location Section ends here */}
-
-//         {/* Search box section starts here */}
-//         <SearchBox
-//           onSearchQueryChange={handleSearchQueryChange}
-//           onFilterTypeChange={handleFilterTypeChange}
-//           className="border border-gray-300 rounded-lg py-2 w-full sm:w-auto"
-//         />
-//         {/* Search box section ends here */}
-
-//         <button
-//           onClick={handleSearch}
-//           className="bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md transition-cus cursor-pointer hover:bg-blue-500 dark:hover:bg-amber-400"
-//         >
-//           Search
-//         </button>
-//       </div>
-//       {/* Search, Location and button Section starts here*/}
-
-//       {/* Map Section */}
-//       {!isOpen && (
-//         <section className="h-max w-full">
-//           <Map isDarkMode={darkMode} position={mapPosition} />
-//         </section>
-//       )}/
-
-// {/*
-//       {!isOpen && showMap && (
-//         <section className="h-max w-full">
-//           <Map isDarkMode={darkMode} position={mapPosition} />
-//         </section>
-//       )} */}
-
-//       {/* Search Results Section */}
-//       <section className="p-4">
-//         <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-//           Search Results
-//         </h2>
-//         {loading && <p>Loading hospitals...</p>}
-//         {error && <p className="text-red-500">Error: {error.message}</p>}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-//           {results.map((result, index) => (
-//             <Card key={index} data={result} searchQuery={searchQuery} filterType={filterType} />
-//           ))}
-//         </div>
-//       </section>
-//     </main>
-//   );
-// }
-
-// export default Home;
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Map, LocationSection, SearchBox, Card } from "../../components/index";
 import { useMenuContext } from "../../context/MenuContext/MenuContextProvider";
 import { useDarkMode } from "../../context/ThemeContext/ThemeContextProvider";
-import { getLocationResult } from "../../hooks/search/export";
+import { getLocationResult, useMlModel } from "../../hooks/search/export";
 import api from "../../hooks/apiInstance";
 import debounce from "../../hooks/debounce";
 
@@ -240,14 +12,21 @@ function Home() {
   const { darkMode } = useDarkMode();
 
   // API functions
-  const { msg, data, loading, error, fetchLocationResults } = getLocationResult();
-  console.log(msg);
+  const { msg, data, loading, error, fetchLocationResults } =
+    getLocationResult();
+
+  // Ref for the search results section
+  const resultsSectionRef = useRef(null);
 
   // State for map position
   const [mapPosition, setMapPosition] = useState(null);
 
   // State for search results (final results displayed in cards)
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(() => {
+    // Restore results from localStorage on page refresh
+    const savedResults = localStorage.getItem("searchResults");
+    return savedResults ? JSON.parse(savedResults) : [];
+  });
 
   // State for real-time search results (displayed below the search box)
   const [realTimeResults, setRealTimeResults] = useState([]);
@@ -257,6 +36,14 @@ function Home() {
 
   // State for filter type
   const [filterType, setFilterType] = useState("doctor");
+
+  // State to track if a search has been performed
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Save results to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("searchResults", JSON.stringify(results));
+  }, [results]);
 
   // Real-time search effect with debouncing
   useEffect(() => {
@@ -277,21 +64,18 @@ function Home() {
     // Debounce the API call
     const debouncedFetch = debounce(fetchRealTimeResults, 300); // 300ms delay
 
-    if (searchQuery && filterType !== "symptoms") {
+    if (searchQuery && filterType !== "symptom") {
       debouncedFetch(); // Call the debounced function
     } else {
       setRealTimeResults([]);
-      // Clear real-time results if no query or filter is "symptoms"
     }
 
     // Cleanup function to cancel the debounce on unmount or dependency change
     return () => {
       debouncedFetch.cancel();
-      // Cancel any pending API call
     };
   }, [searchQuery, filterType]);
 
-  // console.log("Home.jsx", realTimeResults);
   // Handle location updates from LocationSection
   const handleLocationChange = (location) => {
     setMapPosition(location);
@@ -313,20 +97,20 @@ function Home() {
   // Handle search button click
   const handleSearch = () => {
     if (mapPosition) {
-      // Call the final search API
+      setHasSearched(true); // Mark that a search has been performed
       fetchLocationResults(
         mapPosition.lat,
         mapPosition.lng,
         searchQuery,
         filterType
       );
-      // console.log(
-      //   "Final search for:",
-      //   mapPosition.lat,
-      //   mapPosition.lng,
-      //   searchQuery,
-      //   filterType
-      // );
+
+      // Scroll to the results section
+      if (resultsSectionRef.current) {
+        resultsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      alert("Please select the location.");
     }
   };
 
@@ -344,9 +128,7 @@ function Home() {
   };
 
   return (
-    <main 
-      className="h-max w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col pt-3 transition-cus"
-    >
+    <main className="h-max w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col pt-3 transition-cus">
       {/* Search, Location, and Button Section */}
       <div className="flex flex-col md:flex-row gap-y-1 items-center sm:justify-center w-full px-4 py-3 md:gap-x-2">
         {/* Location Section */}
@@ -367,9 +149,23 @@ function Home() {
         {/* Search Button */}
         <button
           onClick={handleSearch}
-          className="bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md transition-cus cursor-pointer hover:bg-blue-500 dark:hover:bg-amber-400"
+          className="bg-blue-600 dark:bg-amber-500 text-white px-4 py-2 rounded-md transition-cus cursor-pointer hover:bg-blue-500 dark:hover:bg-amber-400 flex items-center space-x-2"
         >
-          Search
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <span>Search</span>
         </button>
       </div>
 
@@ -381,30 +177,118 @@ function Home() {
       )}
 
       {/* Search Results Section */}
-      <section className="p-4">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Search Results
-        </h2>
-        {loading && <p>Loading hospitals...</p>}
-        {error && <p className="text-red-500">Error: {error.message}</p>}
-        {msg && <p className="text-amber-500">{msg}</p>}
-        {/* {!loading && !error && results.length === 0 && (
-          <p>No nearby hospitals found.</p>
-        )} */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
-          { 
-            results.map((result, index) => (
+      {hasSearched && (
+        <section className="p-4" ref={resultsSectionRef}>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white flex items-center space-x-2">
+            <svg
+              className="w-6 h-6 text-blue-600 dark:text-amber-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+            <span>Search Results</span>
+          </h2>
+
+          {/* Loading State */}
+          {loading && (
+            <div className="flex flex-col items-center justify-center space-y-4 py-8">
+              <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+              <p className="text-gray-600 dark:text-gray-300">
+                Searching for hospitals...
+              </p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="flex flex-col items-center justify-center space-y-4 py-8 bg-red-50 dark:bg-red-900/20 rounded-lg p-6">
+              <svg
+                className="w-12 h-12 text-red-500 dark:text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-red-600 dark:text-red-400 text-center">
+                Oops! Something went wrong. Please try again later.
+              </p>
+            </div>
+          )}
+
+          {/* Message State */}
+          {msg && (
+            <div className="flex flex-col items-center justify-center space-y-4 py-8 bg-amber-50 dark:bg-amber-900/20 rounded-lg p-6">
+              <svg
+                className="w-12 h-12 text-amber-500 dark:text-amber-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-amber-600 dark:text-amber-400 text-center">
+                {msg}
+              </p>
+            </div>
+          )}
+
+          {/* No Hospitals Found State */}
+          {!loading && !error && results.length === 0 && (
+            <div className="flex flex-col items-center justify-center space-y-4 py-8 bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <svg
+                className="w-12 h-12 text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-gray-600 dark:text-gray-400 text-center">
+                No nearby hospitals found. Try adjusting your search filters.
+              </p>
+            </div>
+          )}
+
+          {/* Results Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {results.map((result) => (
               <Card
-                key={index}
+                key={result.id}
                 data={result}
                 searchQuery={searchQuery}
                 filterType={filterType}
               />
-            ))
-          }
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

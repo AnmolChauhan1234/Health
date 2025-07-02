@@ -8,7 +8,7 @@ function MyAccount({role}) {
   useAuthRedirect();
 
   return (
-    <div className='w-full min-h-[50vh] dark:bg-gray-800'>
+    <div className='w-full min-h-[50vh] dark:bg-gray-800 py-8'>
       {
         role === 'patient' ? <PatientAccount /> : <HospitalAccount />
       }

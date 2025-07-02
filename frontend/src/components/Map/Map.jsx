@@ -35,22 +35,17 @@ function Map({ isDarkMode, position }) {
   const LocationMarker = () => {
     useMapEvents({
       click(e) {
-        // console.log(
-        //   "Selected Location - Latitude:",
-        //   e.latlng.lat,
-        //   "Longitude:",
-        //   e.latlng.lng
-        // );
+        // Handle map click events if needed
       },
     });
 
-    return position ? <Marker position={position} /> : null;
+    return null; // No marker rendered here
   };
 
   return (
     <div>
       <MapContainer
-        center={position || currentLocation || [28.6139, 77.209]} // Default: New Delhi
+        center={position || currentLocation || [28.4744, 77.5038]} // Default: Sector 83, Greater Noida
         zoom={10}
         className="h-[300px] sm:h-[500px] w-[90%] mx-auto relative z-0"
       >
@@ -59,24 +54,14 @@ function Map({ isDarkMode, position }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <MapView position={position} />
-        {currentLocation && <Marker position={currentLocation} />}
+        {/* Render only one marker based on the priority */}
+        {position ? (
+          <Marker position={position} /> // Show searched location marker
+        ) : (
+          currentLocation && <Marker position={currentLocation} /> // Show current location marker
+        )}
         <LocationMarker />
       </MapContainer>
-
-      {/* {position && (
-        <div>
-          <h3>Selected Location:</h3>
-          <p>Latitude: {position.lat}</p>
-          <p>Longitude: {position.lng}</p>
-        </div>
-      )}
-      {currentLocation && (
-        <div>
-          <h3>Current Location:</h3>
-          <p>Latitude: {currentLocation.lat}</p>
-          <p>Longitude: {currentLocation.lng}</p>
-        </div>
-      )} */}
     </div>
   );
 }

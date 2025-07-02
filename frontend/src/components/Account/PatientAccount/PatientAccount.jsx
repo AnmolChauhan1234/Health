@@ -166,14 +166,53 @@ function PatientAccount() {
     }
   };
 
-  // Loading and error states
-  if (loadingProfile) return <div>Loading...</div>;
-  if (errorProfile) {
-    console.error("Error fetching profile:", errorProfile);
+
+  //loading section starts here
+  if (loadingProfile) {
     return (
-      <div>Error: {errorProfile.message || "Failed to load profile data."}</div>
+      <div className="flex flex-col items-center justify-center space-y-4 w-full min-h-full">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
+        <p className="text-gray-600 dark:text-gray-400 text-lg font-semibold">
+          Loading...
+        </p>
+      </div>
     );
   }
+  //loading section ends here
+
+  // error section starts here
+  if (errorProfile) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-red-50 dark:bg-red-900 rounded-lg shadow-md w-full min-h-full">
+        <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-800 rounded-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-red-500 dark:text-red-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <p className="text-red-600 dark:text-red-300 text-lg font-semibold">
+          Error: {errorProfile.message || "Failed to load profile data."}
+        </p>
+        {/* <button
+          onClick={() => window.location.reload()} // Reload the page or retry
+          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+        >
+          Try Again
+        </button> */}
+      </div>
+    );
+  }
+
   if (!profileData) return <div>No profile data found.</div>;
 
   return (
@@ -181,7 +220,7 @@ function PatientAccount() {
 
       <Modal isOpen={isOpen} closeModal={closeModal} statusCode={statusCode} message={modalMessage} />
 
-      <main className="w-full max-w-2xl mx-auto rounded-lg border shadow-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+      <main className="w-full max-w-2xl mx-auto rounded-md shadow-lg shadow-gray-400 dark:shadow-gray-600 dark:bg-gray-800 dark:text-white px-4 py-2 ">
 
         {/* Profile Picture Section */}
         <section className="flex flex-col items-center space-y-4">
@@ -217,7 +256,7 @@ function PatientAccount() {
         <div className="flex justify-end mb-4">
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+            className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 cursor-pointer"
           >
             {isEditing ? "Cancel Editing" : "Edit Profile"}
           </button>
@@ -258,7 +297,7 @@ function PatientAccount() {
           <button
             type="submit"
             disabled={isUpdating || !isEditing}
-            className="w-full bg-amber-500 text-white py-2 rounded mt-4 hover:bg-amber-600 disabled:bg-gray-400"
+            className="w-full bg-amber-500 text-white py-2 rounded mt-4 hover:bg-amber-600 disabled:bg-gray-400 cursor-pointer"
           >
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>

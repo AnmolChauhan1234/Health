@@ -1,99 +1,130 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import getDetailsResult from "../../hooks/search/getDetailsResult";
+import api from "../../hooks/apiInstance";
 
-function Card({ data ,  searchQuery, filterType}) {
-
-
-  //naivgation here.
+function Card({ data, searchQuery, filterType }) {
   const navigate = useNavigate();
-  //dummy data section starts here.
+  const { id, name, profile_picture, cost } = data;
 
-  const dummyData = {
-    hospital: {
-      userProfile: {
-        role: "Admin",
-        name: "John Doe",
-        email: "johndoe@example.com",
-        phone_number: "+1234567890",
-        joined_at: "2021-01-15",
-        profile_picture: "https://via.placeholder.com/150",
-      },
-      HospitalProfile: {
-        hospital_address: "123 Main St, Springfield, USA",
-        license_number: "HL123456",
-        established_year: "1995",
-        bed_capacity: "200",
-        emergency_services: true,
-      },
-    },
-    facility: {
-      name: "X-Ray",
-      cost: "$50",
-      available_slots: "10",
-      // doctor_name: "Dr. Smith",
-      // doctor_image: "https://via.placeholder.com/150",
-      // appointment_fees_in_hospital: "$100",
-      // specialization_in_hospital: "Cardiology",
-      // consultation_days: "Mon, Wed, Fri",
-      // availability_in_hospital: "9:00 AM - 5:00 PM"
-    },
-  };
-  
-  const {id = 4, name, latitude, longitude, distance } = data;
-  // const [data1 , setData1] =  useState();
-  // setData1(dummyData)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const {getResult , searchData} = getDetailsResult();
-
-  // console.log("Card's" , searchQuery , filterType)
-
+  // Function to send details to API
   const handleViewDetails = async () => {
+    console.log("Viewing details for:", id);
 
-    console.log("fetching inside the card.")
+    // Construct API endpoint
+    const endPoint = `/search-api/view-hospital-details/?id=${id}&type=${filterType}&search=${searchQuery}`;
+    console.log("API Endpoint:", endPoint);
 
-    const success = await getResult(id, filterType, searchQuery);
-    navigate("/details", { state: { hospitalData: dummyData } });
-    
-
-    // if (success) {
-
-    //   console.log("Details fetched successfully for:", id);
-    //   navigate("/details", { state: { hospitalData: searchData } });
-
-    // } else {
-    //   console.error("Failed to fetch hospital details.");
-    // }
+    try {
+      setLoading(true);
+      setError(null); // Clear any previous errors
+      const response = await api.get(endPoint);
+      if (response.status === 200) {
+        navigate("/details", { state: { hospitalData: response.data } });
+      } else {
+        setError("Failed to fetch details. Please try again.");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6 mb-4 transition-all duration-200 hover:shadow-xl hover:scale-105">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+    <div 
+      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-6 px-4 mb-4 transition-all duration-200 hover:shadow-xl hover:scale-105 transform-gpu"
+    >
+      {/* Profile Picture section starts here*/}
+      <div className="flex justify-center mb-4">
+        <img
+          src={
+            profile_picture ||
+            "https://i.pinimg.com/736x/53/89/bb/5389bb8f55dbf81efdea7e76f51c29ea.jpg"
+          }
+          alt={name}
+          className="w-24 h-24 rounded-full object-cover border-4 border-blue-100 dark:border-amber-100"
+        />
+      </div>
+      {/* Profile picture section ends here */}
+
+      {/* Name section starts here*/}
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
         {name}
       </h3>
-      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-        <p>
-          <span className="font-medium">Latitude:</span> {latitude}
-        </p>
-        <p>
-          <span className="font-medium">Longitude:</span> {longitude}
-        </p>
-        <p>
-          <span className="font-medium">Distance:</span> {distance} km
-        </p>
-      </div>
+      {/* Name section ends here */}
 
-      {/* View link starts here */}
-      <div className="mt-4">
+      {/* Cost section starts here*/}
+      <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-4">
+        <span className="font-medium">Cost:</span> {cost ? `₹${cost}` : "N/A"}
+      </p>
+      {/* Cost section ends here */}
+
+      {/* Error Message section starts here */}
+      {error && (
+        <div className="flex items-center justify-center mb-4">
+          <svg
+            className="w-5 h-5 text-red-500 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p className="text-red-500 text-sm">Could not load details</p>
+        </div>
+      )}
+      {/* Error Message section ends here */}
+
+      {/* View Details Button starts here*/}
+      <div className="mt-4 flex justify-center">
+
+        {/* button section starts here */}
         <button
-          className="bg-blue-500 dark:bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-amber-600 transition-colors duration-200"
+          className={`${
+            loading
+              ? "bg-blue-400 dark:bg-amber-400 cursor-not-allowed"
+              : "bg-blue-500 dark:bg-amber-500 hover:bg-blue-600 dark:hover:bg-amber-600"
+          } text-white px-6 py-2 rounded-md transition-cus  flex items-center justify-center cursor-pointer`}
           onClick={handleViewDetails}
+          disabled={loading}
         >
-          View Details
+          {/* loading starts here */}
+          {loading ? (
+            <>
+              <svg
+                className="w-5 h-5 mr-2 animate-spin"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              Loading...
+            </>
+          ) : (
+            "View Details"
+          )}
         </button>
-      </div>
-      {/* Link section ends here */}
+        {/* button section ends here */}
 
+      </div>
+      {/* View details button ends here */}
+      
     </div>
   );
 }
