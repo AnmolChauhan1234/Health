@@ -58,16 +58,13 @@ Welcome to HealthEasy, a groundbreaking web application designed to revolutioniz
 
 - **Razorpay:** A secure payment gateway for seamless transactions.
 
-<!-- ### Deployment
-- **Docker:** A containerization platform for consistent deployment across environments.
-- **Nginx:** A high-performance web server and reverse proxy. -->
 
 ## 🚀 Installation Guide
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/your-repo/healthafford.git
-cd healthafford
+git clone https://github.com/AnmolChauhan1234/Health.git
+cd Health
 ```
 
 ### Step 2: Set Up the Backend
@@ -107,35 +104,6 @@ npm run dev
 2. **Add Patient Bills:** Easily add and manage patient bills.
 3. **Track Payments:** Monitor payments and EMIs in real-time.
 
-<!-- ## 🤝 Contributing
-
-We welcome contributions from the community! Here’s how you can get started:
-
-### Fork the Repository:
-```bash
-git clone https://github.com/your-repo/healthafford.git
-```
-
-### Create a New Branch:
-```bash
-git checkout -b feature/YourFeatureName
-```
-
-### Commit Your Changes:
-```bash
-git commit -m 'Add some feature'
-```
-
-### Push to the Branch:
-```bash
-git push origin feature/YourFeatureName
-```
-
-### Open a Pull Request:
-Submit your changes for review.
-
-## 📜 License
-This project is licensed under the MIT License. See the LICENSE file for details. -->
 
 ## 🌍 Impact
 
@@ -151,17 +119,10 @@ HealthEasy was born out of the vision to make healthcare accessible and affordab
 
 ✅ **User-Centric Design:** Our platform is designed with the user in mind, ensuring a smooth and intuitive experience.
 
-✅ **Scalable Solution:** Built with scalability in mind, HealthAfford can grow with your needs.
-
-<!-- ## 📞 Get in Touch
-Have questions or feedback? We’d love to hear from you! -->
-
-📧 **Email:** lovekumar3009@gmail.com
-
-<!-- 🌐 **Website:** [www.healthafford.com](http://www.healthafford.com) -->
+✅ **Scalable Solution:** Built with scalability in mind, HealthEasy can grow with your needs.
 
 ## 🙏 Thank You
 
 Thank you for choosing HealthEasy! Together, we can make healthcare affordable and accessible for everyone. 💙
 
-🌟 **HealthAfford - Affordable Healthcare for All** 🌟
+🌟 **HealthEasy - Affordable Healthcare for All** 🌟
