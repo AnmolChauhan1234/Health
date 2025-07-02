@@ -2,6 +2,8 @@
 
 Welcome to HealthEasy, a groundbreaking web application designed to revolutionize the way patients access affordable healthcare and how hospitals manage billing. Our mission is to bridge the gap between patients and cost-effective healthcare services, ensuring that everyone has access to the care they need without financial stress. 💊💻
 
+---
+
 ## 🌟 Key Features
 
 ### For Patients 👩‍⚕️👨‍⚕️
@@ -14,7 +16,6 @@ Welcome to HealthEasy, a groundbreaking web application designed to revolutioniz
 
 ✅ **EMI Management:** Track and pay EMIs conveniently, ensuring financial flexibility.
 
-
 ### For Hospitals 🏥
 
 ✅ **Hospital Integration:** Easily add and manage patient bills with our intuitive tools.
@@ -22,7 +23,6 @@ Welcome to HealthEasy, a groundbreaking web application designed to revolutioniz
 ✅ **Payment Tracking:** Monitor payments and EMIs in real-time.
 
 ✅ **Efficient Billing:** Streamline billing processes and improve patient satisfaction.
-
 
 ### For Everyone 🌍
 
@@ -32,6 +32,7 @@ Welcome to HealthEasy, a groundbreaking web application designed to revolutioniz
 
 ✅ **Secure Transactions:** Powered by Razorpay for safe and reliable payments.
 
+---
 
 ## 🛠️ Technologies Used
 
@@ -62,12 +63,15 @@ Welcome to HealthEasy, a groundbreaking web application designed to revolutioniz
 - **Docker:** A containerization platform for consistent deployment across environments.
 - **Nginx:** A high-performance web server and reverse proxy. -->
 
+---
+
 ## 🚀 Installation Guide
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/your-repo/healthafford.git
-cd healthafford
+# Clone the official HealthEasy repository
+git clone https://github.com/AnmolChauhan1234/Health.git
+cd Health
 ```
 
 ### Step 2: Set Up the Backend
@@ -94,6 +98,8 @@ cd ../frontend
 npm run dev
 ```
 
+---
+
 ## 💡 How It Works
 
 ### For Patients
@@ -107,35 +113,27 @@ npm run dev
 2. **Add Patient Bills:** Easily add and manage patient bills.
 3. **Track Payments:** Monitor payments and EMIs in real-time.
 
-<!-- ## 🤝 Contributing
+---
 
-We welcome contributions from the community! Here’s how you can get started:
+## 📁 Project Structure
 
-### Fork the Repository:
-```bash
-git clone https://github.com/your-repo/healthafford.git
+```
+backend/                # Django backend
+  server/               # Django project root
+    accounts/           # User accounts app
+    hospital_management/# Hospital management app
+    ml_api/             # Machine learning API integration
+    payments/           # Payments app
+    profiles/           # User profiles app
+    search_api/         # Search functionality
+    server/             # Django settings, URLs, WSGI/ASGI
+frontend/               # React frontend (Vite + Tailwind)
+  src/                  # React source code
+  public/               # Static assets
+ml_model/               # Machine learning models (if any)
 ```
 
-### Create a New Branch:
-```bash
-git checkout -b feature/YourFeatureName
-```
-
-### Commit Your Changes:
-```bash
-git commit -m 'Add some feature'
-```
-
-### Push to the Branch:
-```bash
-git push origin feature/YourFeatureName
-```
-
-### Open a Pull Request:
-Submit your changes for review.
-
-## 📜 License
-This project is licensed under the MIT License. See the LICENSE file for details. -->
+---
 
 ## 🌍 Impact
 
@@ -145,23 +143,27 @@ HealthEasy was born out of the vision to make healthcare accessible and affordab
 - **Support Hospitals:** Streamline billing processes and improve efficiency.
 - **Revolutionize Healthcare:** Leverage cutting-edge technologies to create a seamless experience for all users.
 
+---
+
 ## 🎯 Why HealthEasy?
 
 ✅ **Affordable Healthcare:** We make healthcare accessible to everyone, regardless of their financial situation.
 
 ✅ **User-Centric Design:** Our platform is designed with the user in mind, ensuring a smooth and intuitive experience.
 
-✅ **Scalable Solution:** Built with scalability in mind, HealthAfford can grow with your needs.
+✅ **Scalable Solution:** Built with scalability in mind, HealthEasy can grow with your needs.
 
-<!-- ## 📞 Get in Touch
-Have questions or feedback? We’d love to hear from you! -->
+---
 
-📧 **Email:** lovekumar3009@gmail.com
+## 🔗 Useful Links
 
-<!-- 🌐 **Website:** [www.healthafford.com](http://www.healthafford.com) -->
+- **Main Repository:** [HealthEasy GitHub](https://github.com/AnmolChauhan1234/Health.git)
+- **Billing Branch:** [HealthEasy Billing Features](https://github.com/AnmolChauhan1234/Health/tree/billing)
+
+---
 
 ## 🙏 Thank You
 
 Thank you for choosing HealthEasy! Together, we can make healthcare affordable and accessible for everyone. 💙
 
-🌟 **HealthAfford - Affordable Healthcare for All** 🌟
+🌟 **HealthEasy - Affordable Healthcare for All** 🌟
