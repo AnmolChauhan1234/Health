@@ -75,6 +75,8 @@ function PatientAccount() {
         profilePicture: cloudinaryImageUrl,
       });
 
+      console.log(cloudinaryImageUrl)
+
       if (isSuccess) {
         setDp(cloudinaryImageUrl);
         refetchProfile();
@@ -112,6 +114,7 @@ function PatientAccount() {
 
       //setting dp to the profile data received
       setDp(profileData.userProfile?.profilePicture || "/images/user-dp.jpg");
+      console.log(dp)
     }
   }, [profileData]);
 

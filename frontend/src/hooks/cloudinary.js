@@ -4,7 +4,7 @@ import { useUserContext } from "../context/UserContext/UserContextProvider";
 
 const useCloudinaryUpload = () => {
 
-    const { userRole } = useUserContext();
+    // const { userRole } = useUserContext();
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
@@ -56,8 +56,11 @@ const useCloudinaryUpload = () => {
             // Display message
             console.log("Image uploaded successfully");
 
+            console.log(response.data.secure_url)
+
             // Return URL for further use
             return response.data.secure_url;
+            
 
         } catch (error) {
 
