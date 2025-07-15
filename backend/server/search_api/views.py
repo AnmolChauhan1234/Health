@@ -1,5 +1,5 @@
 from django.shortcuts import render
-import requests
+# import requests
 from accounts.models import Hospital
 from rest_framework import generics, permissions
 from rest_framework.response import Response
