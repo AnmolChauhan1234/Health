@@ -1,6 +1,6 @@
 # HealthEasy - Affordable Healthcare Solutions 🌟
 
-Welcome to HealthEasy, a groundbreaking web application designed to revolutionize the way patients access affordable healthcare and how hospitals manage billing. Our mission is to bridge the gap between patients and cost-effective healthcare services, ensuring that everyone has access to the care they need without financial stress. 💊💻
+Welcome to HealthEasy, a groundbreaking web application designed to revolutionize the way patients access affordable healthcare and how hospitals manage billing. Our mission is to bridge the gap between patients and cost-effective healthcare services, ensuring that everyone has access to the care they need without financial stress.
 
 ## 🌟 Key Features
 
