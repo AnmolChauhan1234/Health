@@ -26,4 +26,5 @@ urlpatterns = [
     path('payments/',include('payments.urls')),
     path('ml_app/',include('ml_app.urls')),
     path('history/',include('history.urls')),
+    path('core/', include('core.urls')),
 ]

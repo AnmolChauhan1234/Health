@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'ml_app',
     'payments',
     'history',
+    'core',
 ]
 
 MIDDLEWARE = [
