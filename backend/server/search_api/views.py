@@ -128,24 +128,46 @@ class NearbyHospitalsView(APIView):
         try:
             latitude = float(request.GET.get("lat"))
             longitude = float(request.GET.get("lng"))
+            
             print(f"Received lat: {latitude}, lng: {longitude}")  # Debugging
-            radius = 60000  # 10 km
+            # radius = 60000  # 10 km
+            radius = 10000  # 10 km in meters
             search = request.GET.get("search", "").strip()
             search_type = request.GET.get("search_type", "").strip()
+            
+            print(f"radius: {radius}, search: {search} , search_type: {search_type}")
 
             # Step 1: Get nearby hospitals using raw SQL
+            # sql_query = """
+            # SELECT accounts_hospital.id, accounts_user.full_name, accounts_hospital.latitude, 
+            #        accounts_hospital.longitude, 
+            #        ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
+            # FROM accounts_hospital
+            # JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
+            # WHERE ST_DWithin(accounts_hospital.geom, ST_MakePoint(%s, %s), %s, true)
+            # ORDER BY distance ASC;
+            # """
             sql_query = """
-            SELECT accounts_hospital.id, accounts_user.full_name, accounts_hospital.latitude, 
-                   accounts_hospital.longitude, 
-                   ST_DistanceSphere(accounts_hospital.geom, ST_MakePoint(%s, %s)) AS distance
-            FROM accounts_hospital
-            JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
-            WHERE ST_DWithin(accounts_hospital.geom, ST_MakePoint(%s, %s), %s, true)
+            SELECT * FROM (
+                SELECT accounts_hospital.id, accounts_user.full_name, accounts_hospital.latitude, 
+                    accounts_hospital.longitude,
+                    (
+                        6371000 * acos(
+                            cos(radians(%s)) * cos(radians(accounts_hospital.latitude)) *
+                            cos(radians(accounts_hospital.longitude) - radians(%s)) +
+                            sin(radians(%s)) * sin(radians(accounts_hospital.latitude))
+                        )
+                    ) AS distance
+                FROM accounts_hospital
+                JOIN accounts_user ON accounts_user.id = accounts_hospital.user_id
+            ) AS sub
+            WHERE distance <= %s
             ORDER BY distance ASC;
             """
 
             with connection.cursor() as cursor:
-                cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])
+                # cursor.execute(sql_query, [longitude, latitude, longitude, latitude, radius])
+                cursor.execute(sql_query, [latitude, longitude, latitude, radius])
                 print(longitude, latitude, longitude, latitude, radius)
                 nearby_hospitals = cursor.fetchall()
                 print("ok")

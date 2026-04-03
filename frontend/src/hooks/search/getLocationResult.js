@@ -15,11 +15,12 @@ function getLocationResult() {
     setmsg(null);
 
     try {
-      // const endp = `/search-api/get-nearby-hospitals/?lat=28.5672&lng=77.21&search=${searchQuery}&search_type=${filterType}`;
-      const endp = `/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}&search=${searchQuery}&search_type=${filterType}`;
+      console.log(lat, ": ",lng);
+      const endp = `/search-api/get-nearby-hospitals/?lat=28.5324&lng=77.3947&search=${searchQuery}&search_type=${filterType}`;
+      // const endp = `/search-api/get-nearby-hospitals/?lat=${lat}&lng=${lng}&search=${searchQuery}&search_type=${filterType}`;
       // console.log("api call to ", endp);
 
-      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.7041&lng=77.1025`);
+      // const response =await api.get(`/search-api/get-nearby-hospitals/?lat=28.5324&lng=77.3947`);
 
       // const response = await api.get(`/search-api/get-nearby-hospitals`, {
       //   params: {

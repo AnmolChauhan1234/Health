@@ -88,13 +88,13 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # CSRF Configuration
 CSRF_COOKIE_SECURE = False  # ✅ Set to True in production (HTTPS required)
 CSRF_COOKIE_HTTPONLY = False  # ✅ Must be False so the frontend can read it
-CSRF_COOKIE_SAMESITE = "None"  # ✅ Required for cross-origin requests with cookies
+CSRF_COOKIE_SAMESITE = "Lax"  # ✅ Required for cross-origin requests with cookies
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS  # ✅ Trusted origins for CSRF protection
 
 # Cookies & Sessions Settings (Needed for JWT & Cookies)
 SESSION_COOKIE_SECURE = False  # ✅ Set to True in production (HTTPS required)
 SESSION_COOKIE_HTTPONLY = True  # ✅ Prevent JS access to session cookies
-SESSION_COOKIE_SAMESITE = "None"  # ✅ Required for cross-origin authentication
+SESSION_COOKIE_SAMESITE = "Lax"  # ✅ Required for cross-origin authentication
 
 SECURE_COOKIE = False  # Change to True in production
 REFRESH_TOKEN_EXPIRATION = 86400  # 1 day in seconds
