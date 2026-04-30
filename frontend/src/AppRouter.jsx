@@ -53,11 +53,12 @@ function AppRouter() {
           <Route path="history" element={<History role={userRole} />} />
           <Route path="manage" element={<Manage />} />
 
-          {/* Bills Route with Nested Routes */}
+{/* Bills Route with Nested Routes */}
           <Route path="bills">
             <Route index element={<Bills role={userRole} />} />
             <Route path='add-bill-details' element={<AddBillPage />} />,
             <Route path="bill-details/:billing_id" element={ <BillDetailsHistory />}/>
+            <Route path="direct-payment/:billing_id" element={<DirectPaymentPage role={userRole} />} />
             <Route path='add-bill-details' element={<AddBillPage />} />
             {/* <Route
               path=":billId"

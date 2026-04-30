@@ -16,12 +16,13 @@ from django.contrib.auth import get_user_model
 import uuid
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta
+from django.utils import timezone
 from django.utils.timezone import now
 from django.shortcuts import get_object_or_404
 from accounts.models import Hospital
 from hospital_management.models import Doctor, HospitalDoctor, Service, HospitalService, Treatment, HospitalTreatment
 from accounts.models import User, Patient
-from .models import Billing, BillingDetails
+from .models import Billing, BillingDetails, DirectPayment, EMI, EMIInstallment
 from datetime import timedelta, date
 from history.models import BillHistory
 
@@ -305,6 +306,7 @@ class CreateRazorpayOrder(APIView):
             amount = int(billing.total_amount * 100)
 
             if amount <= 0:
+                print(f"CreateRazorpayOrder Error: Invalid amount (billing_id={billing_id}, amount={amount})")
                 return Response(
                     {"error": "Invalid amount"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -345,11 +347,13 @@ class CreateRazorpayOrder(APIView):
             }, status=status.HTTP_200_OK)
 
         except razorpay.errors.BadRequestError as e:
+            print(f"CreateRazorpayOrder BadRequestError: {str(e)}")
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
+            print(f"CreateRazorpayOrder Exception: {str(e)}")
             return Response(
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

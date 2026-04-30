@@ -1,5 +1,5 @@
 from django.shortcuts import render
-# import requests
+import requests
 from accounts.models import Hospital
 from rest_framework import generics, permissions
 from rest_framework.response import Response
@@ -207,10 +207,7 @@ class NearbyHospitalsView(APIView):
                 # Step 2.1: Call ML Model
                 ml_url = "http://127.0.0.1:8000/ml_app/predict/"  # Update with actual ML model endpoint
                 ml_response = requests.post(ml_url, json={
-                    "search_type": "symptom",
-                    "lat": latitude,
-                    "lng": longitude,
-                    "search": search
+                    "symptom": search
                 })
 
                 if ml_response.status_code != 200:

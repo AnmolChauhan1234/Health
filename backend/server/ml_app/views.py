@@ -47,6 +47,7 @@ class SymptomPredictionView(APIView):
 
         # Use ML model for prediction
         predicted_specializations = self._predict_specialization(symptom)
+        print("model res",predicted_specializations)
 
         return Response(
             {"prediction": predicted_specializations},

@@ -315,7 +315,7 @@ const BillDetailsHistory = () => {
                 <button
                   onClick={() => {
                     // Navigate to direct payment page
-                    navigate(`/bills/direct-payment/${billing_id}`);
+                    navigate(`/dashboard/bills/direct-payment/${billing_id}`);
                   }}
                   className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
                 >

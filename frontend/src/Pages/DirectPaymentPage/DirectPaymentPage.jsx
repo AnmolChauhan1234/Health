@@ -4,17 +4,17 @@ import { PaymentMethodSelector, RazorpayButton } from "../../components";
 
 
 const DirectPaymentPage = () => {
-  const { billId } = useParams(); // Get billId from the URL
+  const { billing_id } = useParams(); // Get billing_id from the URL
   const [paymentMethod, setPaymentMethod] = useState("");
 
   // Fetch bill details from the backend (API call)
   // const [bill, setBill] = useState(null);
   // useEffect(() => {
-  //   axios.get(`/api/bills/${billId}`).then((response) => setBill(response.data));
-  // }, [billId]);
+  //   api.get(`/history/history-show-bill-details/`, { params: { id: billing_id } }).then((response) => setBill(response.data));
+  // }, [billing_id]);
 
   const bill = {
-    id: billId,
+    id: billing_id,
     totalAmount: 5000,
   };
 
@@ -28,7 +28,7 @@ const DirectPaymentPage = () => {
         onSelect={setPaymentMethod}
       />
       <div className="mt-6">
-        <RazorpayButton amount={bill.totalAmount} />
+        <RazorpayButton amount={bill.totalAmount} billingId={billing_id} />
       </div>
     </div>
   );
