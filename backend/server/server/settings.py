@@ -226,3 +226,10 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # App password (not your
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+
+# Razorpay Configuration (TEST MODE)
+# Get your keys from https://dashboard.razorpay.com/app/settings/APIKeys
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', '')
+RAZORPAY_TEST_MODE = os.getenv('RAZORPAY_TEST_MODE', 'True') == 'True'

@@ -255,3 +255,393 @@ class DeleteBillDetails(APIView):
         
 
         return Response({"message": "Bill details deleted successfully"}, status=status.HTTP_200_OK)
+
+
+
+
+# Razorpay Payment Views
+import razorpay
+import json
+import hashlib
+import hmac
+from django.conf import settings
+
+
+class CreateRazorpayOrder(APIView):
+    """
+    Create a Razorpay order for full payment.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Create a Razorpay order for full bill payment.
+        
+        Expected payload:
+        {
+            "billing_id": 123
+        }
+        """
+        try:
+            billing_id = request.data.get('billing_id')
+            
+            if not billing_id:
+                return Response(
+                    {"error": "Billing ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the billing object
+            billing = get_object_or_404(Billing, id=billing_id)
+            
+            # Check that the user owns this bill (patient)
+            if billing.patient and billing.patient.user != request.user:
+                return Response(
+                    {"error": "You don't have permission to pay this bill"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Get the total amount (convert to paisa - Razorpay expects amount in paisa)
+            amount = int(billing.total_amount * 100)
+
+            if amount <= 0:
+                return Response(
+                    {"error": "Invalid amount"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Initialize Razorpay client
+            razorpay_client = razorpay.Client(
+                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+            )
+
+            # Create order
+            order = razorpay_client.order.create({
+                "amount": amount,
+                "currency": "INR",
+                "receipt": f"bill_{billing_id}",
+                "notes": {
+                    "billing_id": str(billing_id),
+                    "patient_name": billing.patient.user.full_name if billing.patient else ""
+                }
+            })
+
+            # Create or update DirectPayment record
+            direct_payment, created = DirectPayment.objects.update_or_create(
+                billing=billing,
+                defaults={
+                    "payment_method": "razorpay",
+                    "razorpay_order_id": order.get("id"),
+                    "status": "pending"
+                }
+            )
+
+            return Response({
+                "order_id": order.get("id"),
+                "amount": amount,
+                "currency": "INR",
+                "billing_id": billing_id,
+                "key_id": settings.RAZORPAY_KEY_ID
+            }, status=status.HTTP_200_OK)
+
+        except razorpay.errors.BadRequestError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class VerifyPayment(APIView):
+    """
+    Verify Razorpay payment and update bill status.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Verify Razorpay payment.
+        
+        Expected payload:
+        {
+            "billing_id": 123,
+            "razorpay_payment_id": "pay_XXX",
+            "razorpay_order_id": "order_XXX",
+            "razorpay_signature": "signature"
+        }
+        """
+        try:
+            billing_id = request.data.get('billing_id')
+            razorpay_payment_id = request.data.get('razorpay_payment_id')
+            razorpay_order_id = request.data.get('razorpay_order_id')
+            razorpay_signature = request.data.get('razorpay_signature')
+
+            # Validate required fields
+            if not all([billing_id, razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+                return Response(
+                    {"error": "All payment details are required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the billing object
+            billing = get_object_or_404(Billing, id=billing_id)
+
+            # Verify signature
+            secret = settings.RAZORPAY_KEY_SECRET
+            msg = f"{razorpay_order_id}|{razorpay_payment_id}"
+            expected_signature = hmac.new(
+                secret.encode(),
+                msg.encode(),
+                hashlib.sha256()
+            ).hexdigest()
+
+            if razorpay_signature != expected_signature:
+                return Response(
+                    {"error": "Invalid signature"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Update DirectPayment record
+            direct_payment = get_object_or_404(DirectPayment, billing=billing)
+            direct_payment.razorpay_payment_id = razorpay_payment_id
+            direct_payment.razorpay_signature = razorpay_signature
+            direct_payment.status = "completed"
+            direct_payment.save()
+
+            # Update billing status
+            billing.status = "paid"
+            billing.save()
+
+            # Update BillHistory
+            BillHistory.objects.update_or_create(
+                billing=billing,
+                defaults={
+                    "total_amount": billing.total_amount,
+                    "status": "paid"
+                }
+            )
+
+            return Response({
+                "message": "Payment verified successfully",
+                "billing_id": billing_id,
+                "status": "paid"
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class CreateEMIOrder(APIView):
+    """
+    Create a Razorpay order for EMI payment.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Create a Razorpay order for EMI payment.
+        
+        Expected payload:
+        {
+            "billing_id": 123,
+            "installments": 3
+        }
+        """
+        try:
+            billing_id = request.data.get('billing_id')
+            number_of_installments = request.data.get('installments', 3)
+
+            if not billing_id:
+                return Response(
+                    {"error": "Billing ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the billing object
+            billing = get_object_or_404(Billing, id=billing_id)
+
+            # Check that the user owns this bill (patient)
+            if billing.patient and billing.patient.user != request.user:
+                return Response(
+                    {"error": "You don't have permission to pay this bill"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Get the total amount
+            total_amount = billing.total_amount
+
+            if total_amount <= 0:
+                return Response(
+                    {"error": "Invalid amount"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Calculate amount per installment
+            amount_per_installment = total_amount / number_of_installments
+            amount_in_paisa = int(amount_per_installment * 100)
+
+            if amount_in_paisa <= 0:
+                return Response(
+                    {"error": "Invalid installment amount"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Initialize Razorpay client
+            razorpay_client = razorpay.Client(
+                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+            )
+
+            # Create order for first installment
+            order = razorpay_client.order.create({
+                "amount": amount_in_paisa,
+                "currency": "INR",
+                "receipt": f"emi_{billing_id}_1",
+                "notes": {
+                    "billing_id": str(billing_id),
+                    "installment": "1",
+                    "total_installments": str(number_of_installments)
+                }
+            })
+
+            # Create EMI record
+            emi, created = EMI.objects.update_or_create(
+                billing=billing,
+                defaults={
+                    "total_amount": total_amount,
+                    "number_of_installments": number_of_installments,
+                    "amount_per_installment": amount_per_installment,
+                    "end_date": timezone.now() + timedelta(days=30 * number_of_installments),
+                    "status": "active"
+                }
+            )
+
+            return Response({
+                "order_id": order.get("id"),
+                "amount": amount_in_paisa,
+                "currency": "INR",
+                "billing_id": billing_id,
+                "installment_number": 1,
+                "total_installments": number_of_installments,
+                "amount_per_installment": float(amount_per_installment),
+                "key_id": settings.RAZORPAY_KEY_ID
+            }, status=status.HTTP_200_OK)
+
+        except razorpay.errors.BadRequestError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class VerifyEMIPayment(APIView):
+    """
+    Verify Razorpay EMI payment and create installment record.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Verify Razorpay EMI payment.
+        
+        Expected payload:
+        {
+            "billing_id": 123,
+            "razorpay_payment_id": "pay_XXX",
+            "razorpay_order_id": "order_XXX",
+            "razorpay_signature": "signature",
+            "installment_number": 1
+        }
+        """
+        try:
+            billing_id = request.data.get('billing_id')
+            razorpay_payment_id = request.data.get('razorpay_payment_id')
+            razorpay_order_id = request.data.get('razorpay_order_id')
+            razorpay_signature = request.data.get('razorpay_signature')
+            installment_number = request.data.get('installment_number', 1)
+
+            # Validate required fields
+            if not all([billing_id, razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+                return Response(
+                    {"error": "All payment details are required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the billing and EMI objects
+            billing = get_object_or_404(Billing, id=billing_id)
+            emi = get_object_or_404(EMI, billing=billing)
+
+            # Verify signature
+            secret = settings.RAZORPAY_KEY_SECRET
+            msg = f"{razorpay_order_id}|{razorpay_payment_id}"
+            expected_signature = hmac.new(
+                secret.encode(),
+                msg.encode(),
+                hashlib.sha256()
+            ).hexdigest()
+
+            if razorpay_signature != expected_signature:
+                return Response(
+                    {"error": "Invalid signature"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Create EMI installment record
+            from datetime import timedelta
+            due_date = timezone.now() + timedelta(days=30)
+            
+            installment = EMIInstallment.objects.create(
+                emi=emi,
+                installment_amount=emi.amount_per_installment,
+                due_date=due_date,
+                paid_date=timezone.now(),
+                status="paid",
+                razorpay_payment_id=razorpay_payment_id,
+                razorpay_signature=razorpay_signature
+            )
+
+            # Check if all installments are paid
+            paid_installments = emi.installments.filter(status="paid").count()
+            
+            if paid_installments >= emi.number_of_installments:
+                emi.status = "completed"
+                emi.save()
+                
+                # Update billing status to paid
+                billing.status = "paid"
+                billing.save()
+
+                # Update BillHistory
+                BillHistory.objects.update_or_create(
+                    billing=billing,
+                    defaults={
+                        "total_amount": billing.total_amount,
+                        "status": "paid"
+                    }
+                )
+
+            return Response({
+                "message": "EMI payment verified successfully",
+                "billing_id": billing_id,
+                "installment_number": installment_number,
+                "paid_installments": paid_installments,
+                "total_installments": emi.number_of_installments,
+                "status": "paid" if paid_installments >= emi.number_of_installments else "active"
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

@@ -16,6 +16,9 @@ staticfiles/
 
 # Environment variables
 .env
+.env.agent
 
 
 management/
+
+*.pkl

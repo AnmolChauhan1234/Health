@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import  { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 import api from "../../hooks/apiInstance";
 import useDeleteBillDetail from "../../hooks/billing-hooks/useDeleteBillDetail";
@@ -9,6 +9,7 @@ import { useUserContext } from "../../context/UserContext/UserContextProvider";
 
 const BillDetailsHistory = () => {
   const { userRole } = useUserContext();
+  const navigate = useNavigate();
 
   const { billing_id } = useParams(); // Get billing_id from the URL
   const [billDetails, setBillDetails] = useState(null);
@@ -308,11 +309,14 @@ const BillDetailsHistory = () => {
               ))}
             </div>
 
-            {/* Pay button section starts here */}
+{/* Pay button section starts here */}
             <div className="flex justify-center">
-              {userRole !== "hospital" && (
+              {userRole !== "hospital" && billDetails?.history[0]?.status === "pending" && (
                 <button
-                  onClick={() => console.log("payment page here.")}
+                  onClick={() => {
+                    // Navigate to direct payment page
+                    navigate(`/bills/direct-payment/${billing_id}`);
+                  }}
                   className="w-[80%] cursor-pointer bg-green-500 dark:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 dark:hover:bg-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-outfocus:outline-none focus:ring-green-500 dark:focus:ring-green-600 dark:focus:ring-offset-gray-900"
                 >
                   Pay Now

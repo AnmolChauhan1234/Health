@@ -48,6 +48,9 @@ backend/staticfiles/
 # Backend-specific directories
 backend/management/
 
+# ML Model files
+*.pkl
+
 # Mac & Linux
 *.swp
 *~
