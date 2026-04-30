@@ -13,6 +13,7 @@ frontend/dist/
 frontend/dist-ssr/
 frontend/*.local
 frontend/.vite/
+mlmodel/
 
 # Editor & System Files
 .vscode/
