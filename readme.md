@@ -80,7 +80,7 @@ Follow these steps to get the HealthEz platform running on your local machine.
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/AnmolChauhan1234/Health.git
 cd Health
 ```
 
